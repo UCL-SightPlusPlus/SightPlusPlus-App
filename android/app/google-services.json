@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1002166465507",
+    "project_id": "sight-plus-plus",
+    "storage_bucket": "sight-plus-plus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1002166465507:android:1d0ad2a17055782b0566d6",
+        "android_client_info": {
+          "package_name": "ucl.org.sight_plus_plus_team.sight_plus_plus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1002166465507-u5fn4sk9p2dhe5u1e5dguf66v0evc3dp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6uL3muCzfb653oQWrZX6jIvlkOE1rBX4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1002166465507-u5fn4sk9p2dhe5u1e5dguf66v0evc3dp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
