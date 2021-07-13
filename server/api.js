@@ -1,12 +1,21 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 app.get('/listUsers', function (req, res) {
    fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
       console.log( data );
       res.end( data );
    });
+})
+
+app.post('/add', function(req, res){
+    console.log(req.body);
+    res.end("End");
 })
 
 var server = app.listen(9999, function () {
