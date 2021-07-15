@@ -11,16 +11,16 @@ import 'package:wifi_iot/wifi_iot.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // runApp(
-  //     MaterialApp(
-  //         home: Scaffold(
-  //           body: Center(
-  //             child: WifiScan(),
-  //           ),
-  //         )
-  //     )
-  // );
-  runApp(VoiceCommand());
+  runApp(
+      MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: WifiScan(),
+            ),
+          )
+      )
+  );
+  //runApp(VoiceCommand());
 }
 
 //Scanning the WiFi in the area and connect to the one which SSID contains "Sight++"
@@ -63,7 +63,7 @@ class WifiScanState extends State<WifiScan>{
       if(!event){
         print('Connection failed. Scan again');
         Future.delayed(const Duration(milliseconds: 5000), (){
-          loadWifiList();
+          connectToWifi();
         });
       }else{
         print('Connected');
@@ -72,13 +72,23 @@ class WifiScanState extends State<WifiScan>{
         });
       }
     });
-    loadWifiList();
+    getConnection();
+    getIP();
     super.initState();
     //_checkStatus();
   }
 
   //Get the server's ip using udp broadcast
-  void getIP(){
+  void getIP() async{
+    bool connected = await WiFiForIoTPlugin.isConnected();
+    if(!connected){
+      return;
+    }else {
+      String? name = await WiFiForIoTPlugin.getSSID();
+      if(name == null || !name.contains("Sight++")){
+        return;
+      }
+    }
     var data = "Sight++";
     var codec = new Utf8Codec();
     var broadcastAddress = InternetAddress("255.255.255.255");
@@ -106,27 +116,31 @@ class WifiScanState extends State<WifiScan>{
   }
 
   //Scan the WiFi
-  void loadWifiList() async {
+  void connectToWifi() async {
       print('Start scanning...');
-      List<WifiNetwork> htResultNetwork;
+      List<WifiNetwork> htResultNetwork = <WifiNetwork>[];
       bool networkFound = false;
       try {
-        htResultNetwork = await WiFiForIoTPlugin.loadWifiList();
-        for(var network in htResultNetwork){
-          if(network.ssid.toString().contains("Sight++")){
-              WiFiForIoTPlugin.forceWifiUsage(true);
-              networkFound = true;
-              if(await WiFiForIoTPlugin.connect(network.ssid.toString(), password:"liuzhaoxi", security: NetworkSecurity.WPA)){
-                getIP();
-                _connectionSink.add(true);
-                break;
-              }else{
-                _connectionSink.add(false);
-              }
-            }
-        }
+        // htResultNetwork = await WiFiForIoTPlugin.loadWifiList();
+        // for(var network in htResultNetwork){
+        //   if(network.ssid.toString().contains("Sight++")){
+        //       WiFiForIoTPlugin.forceWifiUsage(true);
+        //       networkFound = true;
+        //       if(await WiFiForIoTPlugin.connect(network.ssid.toString(), password:"liuzhaoxi", security: NetworkSecurity.WPA)){
+        //         getIP();
+        //         _connectionSink.add(true);
+        //         break;
+        //       }else{
+        //         _connectionSink.add(false);
+        //       }
+        //     }
+        // }
+        WiFiForIoTPlugin.forceWifiUsage(true);
+        networkFound = await WiFiForIoTPlugin.connect("Your SSID", password:"Your Password", security: NetworkSecurity.WPA);
         if(!networkFound){
           _connectionSink.add(false);
+        }else{
+          _connectionSink.add(true);
         }
       } on PlatformException {
         htResultNetwork = <WifiNetwork>[];
