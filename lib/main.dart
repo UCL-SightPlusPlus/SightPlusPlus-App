@@ -5,9 +5,7 @@ import 'package:dio/dio.dart';
 
 import 'package:flutter_speech/flutter_speech.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,16 +18,15 @@ void main() {
           )
       )
   );
-  //runApp(VoiceCommand());
 }
 
 //Scanning the WiFi in the area and connect to the one which SSID contains "Sight++"
-class WifiScan extends StatefulWidget{
+class WifiScan extends StatefulWidget {
   @override
   WifiScanState createState() => WifiScanState();
 }
 
-class WifiScanState extends State<WifiScan>{
+class WifiScanState extends State<WifiScan> {
   List<WifiNetwork?> _htResultNetwork = [];
   late String ip;
   StreamController<bool> _connectionStreamController = StreamController<bool>();
@@ -37,17 +34,17 @@ class WifiScanState extends State<WifiScan>{
   late StreamSink _connectionSink;
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
   }
 
   //Check the WiFi is connected or not
-  void getConnection() async{
+  void getConnection() async {
     bool result = false;
     bool connected = await WiFiForIoTPlugin.isConnected();
-    if(connected){
+    if (connected) {
       String? name = await WiFiForIoTPlugin.getSSID();
-      if(name != null && name.contains("Sight++")){
+      if (name != null && name.contains("Sight++")) {
         result = true;
       }
     }
@@ -55,19 +52,19 @@ class WifiScanState extends State<WifiScan>{
   }
 
   @override
-  void initState(){
+  void initState() {
     _connectionStream = _connectionStreamController.stream;
     _connectionSink = _connectionStreamController.sink;
     _connectionStream.listen((event) async {
       print('Receive new result');
-      if(!event){
+      if (!event) {
         print('Connection failed. Scan again');
-        Future.delayed(const Duration(milliseconds: 5000), (){
+        Future.delayed(const Duration(milliseconds: 5000), () {
           connectToWifi();
         });
-      }else{
+      } else {
         print('Connected');
-        Future.delayed(const Duration(milliseconds: 5000),(){
+        Future.delayed(const Duration(milliseconds: 5000), () {
           getConnection();
         });
       }
@@ -75,17 +72,18 @@ class WifiScanState extends State<WifiScan>{
     getConnection();
     getIP();
     super.initState();
+    activateSpeechRecognizer();
     //_checkStatus();
   }
 
   //Get the server's ip using udp broadcast
-  void getIP() async{
+  void getIP() async {
     bool connected = await WiFiForIoTPlugin.isConnected();
-    if(!connected){
+    if (!connected) {
       return;
-    }else {
+    } else {
       String? name = await WiFiForIoTPlugin.getSSID();
-      if(name == null || !name.contains("Sight++")){
+      if (name == null || !name.contains("Sight++")) {
         return;
       }
     }
@@ -93,17 +91,19 @@ class WifiScanState extends State<WifiScan>{
     var codec = new Utf8Codec();
     var broadcastAddress = InternetAddress("255.255.255.255");
     List<int> dataToSend = codec.encode(data);
-    RawDatagramSocket.bind(InternetAddress.anyIPv4, 9999).then((RawDatagramSocket socket){
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 9999)
+        .then((RawDatagramSocket socket) {
       socket.broadcastEnabled = true;
       socket.listen((event) async {
         Datagram? dg = socket.receive();
-        if(dg != null){
-          if(codec.decode(dg.data) == 'approve'){
+        if (dg != null) {
+          if (codec.decode(dg.data) == 'approve') {
             ip = dg.address.host;
             print(ip);
             try {
-              var data = {'id':'1234'};
-              var response = await Dio().post('http://'+ip+":9999/add", data: data);
+              var data = {'id': '1234'};
+              var response =
+                  await Dio().post('http://' + ip + ":9999/add", data: data);
               print(response);
             } catch (e) {
               print(e);
@@ -117,86 +117,23 @@ class WifiScanState extends State<WifiScan>{
 
   //Scan the WiFi
   void connectToWifi() async {
-      print('Start scanning...');
-      List<WifiNetwork> htResultNetwork = <WifiNetwork>[];
-      bool networkFound = false;
-      try {
-        // htResultNetwork = await WiFiForIoTPlugin.loadWifiList();
-        // for(var network in htResultNetwork){
-        //   if(network.ssid.toString().contains("Sight++")){
-        //       WiFiForIoTPlugin.forceWifiUsage(true);
-        //       networkFound = true;
-        //       if(await WiFiForIoTPlugin.connect(network.ssid.toString(), password:"liuzhaoxi", security: NetworkSecurity.WPA)){
-        //         getIP();
-        //         _connectionSink.add(true);
-        //         break;
-        //       }else{
-        //         _connectionSink.add(false);
-        //       }
-        //     }
-        // }
-        WiFiForIoTPlugin.forceWifiUsage(true);
-        networkFound = await WiFiForIoTPlugin.connect("Your SSID", password:"Your Password", security: NetworkSecurity.WPA);
-        if(!networkFound){
-          _connectionSink.add(false);
-        }else{
-          _connectionSink.add(true);
-        }
-      } on PlatformException {
-        htResultNetwork = <WifiNetwork>[];
+    print('Start scanning...');
+    List<WifiNetwork> htResultNetwork = <WifiNetwork>[];
+    bool networkFound = false;
+    try {
+      WiFiForIoTPlugin.forceWifiUsage(true);
+      networkFound = await WiFiForIoTPlugin.connect("Sight++",
+          password: "liuzhaoxi", security: NetworkSecurity.WPA);
+      if (!networkFound) {
+        _connectionSink.add(false);
+      } else {
+        getIP();
+        _connectionSink.add(true);
       }
-      setState(() {
-        _htResultNetwork = htResultNetwork;
-      });
+    } catch (exception){
+      print(exception);
+    }
   }
-
-  Widget _buildNames(){
-      return new ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: _htResultNetwork.length,
-        itemBuilder: (context, i){
-          if(i.isOdd){
-            return new Divider();
-          }
-          final index = i ~/ 2;
-          return Text(_htResultNetwork[index]!.ssid.toString()+','+_htResultNetwork[index]!.level.toString());
-        }
-    );
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Wifi Names")
-      ),
-      body: _buildNames(),
-    );
-  }
-}
-
-
-class Language {
-  final String name;
-  final String code;
-  const Language(this.name, this.code);
-}
-
-class VoiceCommand extends StatefulWidget {
-  @override
-  VoiceCommandState createState() => VoiceCommandState();
-}
-
-var languages = [
-  Language('English', 'en_US'),
-  Language('Francais', 'fr_FR'),
-  Language('Pусский', 'ru_RU'),
-  Language('Italiano', 'it_IT'),
-  Language('Español', 'es_ES'),
-];
-
-class VoiceCommandState extends State<VoiceCommand> {
 
   late SpeechRecognition _speech;
 
@@ -207,12 +144,6 @@ class VoiceCommandState extends State<VoiceCommand> {
 
   //String _currentLocale = 'en_US';
   Language selectedLang = languages.first;
-
-  @override
-  initState() {
-    super.initState();
-    activateSpeechRecognizer();
-  }
 
   void activateSpeechRecognizer() {
     print('_MyAppState.activateSpeechRecognizer... ');
@@ -257,7 +188,8 @@ class VoiceCommandState extends State<VoiceCommand> {
     value: l,
     checked: selectedLang == l,
     child: Text(l.name),
-  )).toList();
+  ))
+      .toList();
 
   void start() => _speech.activate(selectedLang.code).then((_) {
     return _speech.listen().then((result) {
@@ -268,45 +200,181 @@ class VoiceCommandState extends State<VoiceCommand> {
     });
   });
 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home:Scaffold(
-        appBar: AppBar(
-          title: Text("Speech Recognition"),
-          actions: <Widget>[
-            PopupMenuButton<Language>(
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text("Speech Recognition"),
+            actions: <Widget>[
+              PopupMenuButton<Language>(
                 icon: const Icon(Icons.control_point),
                 itemBuilder: (BuildContext context) => _buildLanguagesWidgets,
-            ),
-          ],
-        ),
-        body: Padding(
-          padding:EdgeInsets.all(8.0),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      color: Colors.grey.shade200,
-                      child: Text(transcription)
-                    ),
-                ),
-                ElevatedButton(
-                  onPressed: _speechRecognitionAvailable && !_isListening ? () => start() : null,
-                  child: Text(_isListening ? 'Listening...' : 'Listen (${selectedLang.code})',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            )
-          )
-        ),
-      )
-    );
+              ),
+            ],
+          ),
+          body: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            color: Colors.grey.shade200,
+                            child: Text(transcription)),
+                      ),
+                      ElevatedButton(
+                        onPressed: _speechRecognitionAvailable && !_isListening
+                            ? () => start()
+                            : null,
+                        child: Text(
+                          _isListening
+                              ? 'Listening...'
+                              : 'Listen (${selectedLang.code})',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ))),
+        ));
+  }
+}
+
+class Language {
+  final String name;
+  final String code;
+
+  const Language(this.name, this.code);
+}
+
+class VoiceCommand extends StatefulWidget {
+  @override
+  VoiceCommandState createState() => VoiceCommandState();
+}
+
+var languages = [
+  Language('English', 'en_US'),
+  Language('Francais', 'fr_FR'),
+  Language('Pусский', 'ru_RU'),
+  Language('Italiano', 'it_IT'),
+  Language('Español', 'es_ES'),
+];
+
+class VoiceCommandState extends State<VoiceCommand> {
+  late SpeechRecognition _speech;
+
+  bool _speechRecognitionAvailable = false;
+  bool _isListening = false;
+
+  String transcription = 'No text';
+
+  //String _currentLocale = 'en_US';
+  Language selectedLang = languages.first;
+
+  @override
+  initState() {
+    super.initState();
+    activateSpeechRecognizer();
   }
 
+  void activateSpeechRecognizer() {
+    print('_MyAppState.activateSpeechRecognizer... ');
+    _speech = SpeechRecognition();
+    _speech.setAvailabilityHandler(onSpeechAvailability);
+    _speech.setRecognitionStartedHandler(onRecognitionStarted);
+    _speech.setRecognitionResultHandler(onRecognitionResult);
+    _speech.setRecognitionCompleteHandler(onRecognitionComplete);
+    _speech.setErrorHandler(errorHandler);
+    _speech.activate('en_US').then((res) {
+      setState(() => _speechRecognitionAvailable = res);
+    });
+  }
+
+  void onSpeechAvailability(bool result) =>
+      setState(() => _speechRecognitionAvailable = result);
+
+  void onCurrentLocale(String locale) {
+    print('_MyAppState.onCurrentLocale... $locale');
+    setState(
+        () => selectedLang = languages.firstWhere((l) => l.code == locale));
+  }
+
+  void onRecognitionStarted() {
+    setState(() => _isListening = true);
+  }
+
+  void onRecognitionResult(String text) {
+    print('_MyAppState.onRecognitionResult... $text');
+    setState(() => transcription = text);
+  }
+
+  void onRecognitionComplete(String text) {
+    print('_MyAppState.onRecognitionComplete... $text');
+    setState(() => _isListening = false);
+  }
+
+  void errorHandler() => activateSpeechRecognizer();
+
+  List<CheckedPopupMenuItem<Language>> get _buildLanguagesWidgets => languages
+      .map((l) => CheckedPopupMenuItem<Language>(
+            value: l,
+            checked: selectedLang == l,
+            child: Text(l.name),
+          ))
+      .toList();
+
+  void start() => _speech.activate(selectedLang.code).then((_) {
+        return _speech.listen().then((result) {
+          print('_VoiceCommandState.start => result $result');
+          setState(() {
+            _isListening = result;
+          });
+        });
+      });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+      appBar: AppBar(
+        title: Text("Speech Recognition"),
+        actions: <Widget>[
+          PopupMenuButton<Language>(
+            icon: const Icon(Icons.control_point),
+            itemBuilder: (BuildContext context) => _buildLanguagesWidgets,
+          ),
+        ],
+      ),
+      body: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Center(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    color: Colors.grey.shade200,
+                    child: Text(transcription)),
+              ),
+              ElevatedButton(
+                onPressed: _speechRecognitionAvailable && !_isListening
+                    ? () => start()
+                    : null,
+                child: Text(
+                  _isListening
+                      ? 'Listening...'
+                      : 'Listen (${selectedLang.code})',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              )
+            ],
+          ))),
+    ));
+  }
 }
