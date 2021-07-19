@@ -22,36 +22,33 @@ void main() {
 
 //Scanning the WiFi in the area and connect to the one which SSID contains "Sight++"
 class SightPlusPlus extends StatefulWidget {
+  SightPlusPlus({Key? key}) : super(key: key);
+
   @override
   SightPlusPlusState createState() => SightPlusPlusState();
 }
 
 class SightPlusPlusState extends State<SightPlusPlus> {
-  List<WifiNetwork?> _htResultNetwork = [];
+  //variables that required by WiFi and server connection.
   String ip = "";
   StreamController<bool> _connectionStreamController = StreamController<bool>();
   late Stream _connectionStream;
   late StreamSink _connectionSink;
+
+  //variables that required by STT.
   late SpeechRecognition _speech;
   bool _speechRecognitionAvailable = false;
   bool _isListening = false;
   String transcription = '';
   String serverMessage = '';
   Language selectedLang = languages.first;
-  late TextToSpeech _tts;
 
-  /// language
+  //variables that required by TTS
+  late TextToSpeech _tts;
   String? language;
   String? languageCode;
   List<String> languageCodes = [];
-
-  /// voice
   String? voice;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   //Check the WiFi is connected or not
   void getConnection() async {
@@ -59,7 +56,7 @@ class SightPlusPlusState extends State<SightPlusPlus> {
     bool connected = await WiFiForIoTPlugin.isConnected();
     if (connected) {
       String? name = await WiFiForIoTPlugin.getSSID();
-      if (name != null && name.contains("Sight++")) {
+      if (name != null && name.contains("Sight++") && ip != '') {
         result = true;
       }
     }
@@ -68,6 +65,7 @@ class SightPlusPlusState extends State<SightPlusPlus> {
 
   @override
   void initState() {
+    //Create the listener for WiFi and server connection.
     _connectionStream = _connectionStreamController.stream;
     _connectionSink = _connectionStreamController.sink;
     _connectionStream.listen((event) async {
@@ -75,6 +73,9 @@ class SightPlusPlusState extends State<SightPlusPlus> {
       if (!event) {
         setState(() {
           ip = "";
+          serverMessage =
+              'Not connected to the server, please check the network connection.';
+          speak();
         });
         print('Connection failed. Scan again');
         Future.delayed(const Duration(milliseconds: 5000), () {
@@ -88,20 +89,20 @@ class SightPlusPlusState extends State<SightPlusPlus> {
       }
     });
     super.initState();
-    activateSpeechRecognizer();
+    initTextToSpeech();
+    initiateSpeechToText();
     getConnection();
     getIP();
-    _tts = TextToSpeech();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      initLanguages();
-    });
+
   }
 
-  Future<void> initLanguages() async {
-    /// populate lang code (i.e. en-US)
+  //Initialize the TTS.
+  Future<void> initTextToSpeech() async {
+    _tts = TextToSpeech();
+    // populate lang code (i.e. en-US)
     languageCodes = await _tts.getLanguages();
 
-    /// get default language
+    // get default language
     final String? defaultLangCode = await _tts.getDefaultLanguage();
     if (defaultLangCode != null && languageCodes.contains(defaultLangCode)) {
       languageCode = defaultLangCode;
@@ -109,7 +110,7 @@ class SightPlusPlusState extends State<SightPlusPlus> {
       languageCode = languages.first.code;
     }
 
-    /// get voice
+    // get voice
     voice = await getVoiceByLang(languageCode!);
     if (mounted) {
       setState(() {});
@@ -124,10 +125,12 @@ class SightPlusPlusState extends State<SightPlusPlus> {
     return null;
   }
 
+  //Star the TTS.
   void speak() {
     if (languageCode != null) {
       _tts.setLanguage(languageCode!);
     }
+    _tts.setVolume(1.0);
     _tts.speak(serverMessage);
   }
 
@@ -142,26 +145,36 @@ class SightPlusPlusState extends State<SightPlusPlus> {
         return;
       }
     }
-    print('Try to get ip...');
-    var data = "Sight++";
-    var codec = new Utf8Codec();
-    var broadcastAddress = InternetAddress("255.255.255.255");
-    List<int> dataToSend = codec.encode(data);
-    RawDatagramSocket.bind(InternetAddress.anyIPv4, 9999)
-        .then((RawDatagramSocket socket) {
-      socket.broadcastEnabled = true;
-      socket.listen((event) async {
-        Datagram? dg = socket.receive();
-        if (dg != null) {
-          if (codec.decode(dg.data) == 'approve') {
-            setState(() {
-              ip = dg.address.host;
-            });
+    try {
+      print('Try to get ip...');
+      var data = "Sight++";
+      var codec = const Utf8Codec();
+      var broadcastAddress = InternetAddress("255.255.255.255");
+      List<int> dataToSend = codec.encode(data);
+      //Bind socket to receive udp packets from any ip address.
+      RawDatagramSocket.bind(InternetAddress.anyIPv4, 9999)
+          .then((RawDatagramSocket socket) {
+        socket.broadcastEnabled = true;
+        socket.listen((event) async {
+          Datagram? dg = socket.receive();
+          if (dg != null) {
+            //If the server responses with 'approve', store the server's ip.
+            if (codec.decode(dg.data) == 'approve') {
+              setState(() {
+                ip = dg.address.host;
+                serverMessage = 'Connected to the Sight++ server.';
+                speak();
+                _connectionSink.add(true);
+              });
+            }
           }
-        }
+        });
+        //Send broadcast message.
+        socket.send(dataToSend, broadcastAddress, 9999);
       });
-      socket.send(dataToSend, broadcastAddress, 9999);
-    });
+    } catch (exception) {
+      print(exception);
+    }
   }
 
   //Scan the WiFi
@@ -169,21 +182,24 @@ class SightPlusPlusState extends State<SightPlusPlus> {
     print('Start scanning...');
     bool networkFound = false;
     try {
+      //Replace the ssid and password to yours setting.
       networkFound = await WiFiForIoTPlugin.connect("Sight++",
           password: "liuzhaoxi", security: NetworkSecurity.WPA);
+      //If the network is public, use the following one.
+      //networkFound = await WiFiForIoTPlugin.connect("YOUR_SSID");
       if (!networkFound) {
         _connectionSink.add(false);
       } else {
         WiFiForIoTPlugin.forceWifiUsage(true);
         getIP();
-        _connectionSink.add(true);
       }
     } catch (exception) {
       print(exception);
     }
   }
 
-  void activateSpeechRecognizer() {
+
+  void initiateSpeechToText() {
     print('_MyAppState.activateSpeechRecognizer... ');
     _speech = SpeechRecognition();
     _speech.setAvailabilityHandler(onSpeechAvailability);
@@ -219,7 +235,11 @@ class SightPlusPlusState extends State<SightPlusPlus> {
     setState(() => _isListening = false);
   }
 
-  void errorHandler() => activateSpeechRecognizer();
+  void _selectLangHandler(Language lang) {
+    setState(() => selectedLang = lang);
+  }
+
+  void errorHandler() => initiateSpeechToText();
 
   List<CheckedPopupMenuItem<Language>> get _buildLanguagesWidgets => languages
       .map((l) => CheckedPopupMenuItem<Language>(
@@ -229,6 +249,7 @@ class SightPlusPlusState extends State<SightPlusPlus> {
           ))
       .toList();
 
+  //Start STT.
   void start() => _speech.activate(selectedLang.code).then((_) {
         return _speech.listen().then((result) {
           print('_VoiceCommandState.start => result $result');
@@ -239,6 +260,7 @@ class SightPlusPlusState extends State<SightPlusPlus> {
         });
       });
 
+  //Stop STT.
   void stop() => _speech.stop().then((_) async {
         setState(() => _isListening = false);
         if (transcription != "") {
@@ -257,16 +279,17 @@ class SightPlusPlusState extends State<SightPlusPlus> {
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
-        title: Text("Speech Recognition"),
+        title: const Text("Sight++"),
         actions: <Widget>[
           PopupMenuButton<Language>(
             icon: const Icon(Icons.control_point),
+            onSelected: _selectLangHandler,
             itemBuilder: (BuildContext context) => _buildLanguagesWidgets,
           ),
         ],
       ),
       body: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Center(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -280,6 +303,7 @@ class SightPlusPlusState extends State<SightPlusPlus> {
                   padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 15.0),
                   child: Text(serverMessage),
                   decoration: BoxDecoration(border: Border.all())),
+              //Detect user's gesture.
               GestureDetector(
                 onTapDown: (details) =>
                     _speechRecognitionAvailable && !_isListening && ip != ""
@@ -289,12 +313,12 @@ class SightPlusPlusState extends State<SightPlusPlus> {
                   stop();
                 },
                 child: Container(
-                  padding: EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
                     color: Theme.of(context).buttonColor,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  child: Text('My Button'),
+                  child: const Text('My Button'),
                 ),
               ),
               // ElevatedButton(
@@ -325,9 +349,9 @@ class Language {
 }
 
 var languages = [
-  Language('English', 'en_US'),
-  Language('Francais', 'fr_FR'),
-  Language('Pусский', 'ru_RU'),
-  Language('Italiano', 'it_IT'),
-  Language('Español', 'es_ES'),
+  const Language('English', 'en_US'),
+  const Language('Francais', 'fr_FR'),
+  const Language('Pусский', 'ru_RU'),
+  const Language('Italiano', 'it_IT'),
+  const Language('Español', 'es_ES'),
 ];
