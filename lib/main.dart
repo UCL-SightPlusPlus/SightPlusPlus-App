@@ -75,7 +75,7 @@ class SightPlusPlusState extends State<SightPlusPlus> {
           ip = "";
           serverMessage =
               'Not connected to the server, please check the network connection.';
-          speak();
+          //speak();
         });
         print('Connection failed. Scan again');
         Future.delayed(const Duration(milliseconds: 5000), () {
@@ -93,7 +93,6 @@ class SightPlusPlusState extends State<SightPlusPlus> {
     initiateSpeechToText();
     getConnection();
     getIP();
-
   }
 
   //Initialize the TTS.
