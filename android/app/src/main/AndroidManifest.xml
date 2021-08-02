@@ -20,7 +20,7 @@
         android:name=".SightPlusPlusApplication"
         android:label="Sight++"
         android:icon="@mipmap/ic_launcher">
-       <service android:name=".SightPlusPlusService" android:exported="true" android:enabled="true"  />
+       <service android:name=".SightPlusPlusService" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
