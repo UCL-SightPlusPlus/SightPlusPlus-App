@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -57,10 +58,8 @@ Future<void> main() async {
 
   await _configureLocalTimeZone();
 
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform
-      .isLinux
-      ? null
-      : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     selectedNotificationPayload = notificationAppLaunchDetails!.payload;
@@ -68,7 +67,7 @@ Future<void> main() async {
   }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+  AndroidInitializationSettings('app_icon');
 
   /// Note: permissions aren't requested here just to demonstrate that can be
   /// done later
@@ -98,16 +97,11 @@ Future<void> main() async {
     requestBadgePermission: false,
     requestSoundPermission: false,
   );
-  final LinuxInitializationSettings initializationSettingsLinux =
-  LinuxInitializationSettings(
-    defaultActionName: 'Open notification',
-    defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
-  );
+
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS,
     macOS: initializationSettingsMacOS,
-    linux: initializationSettingsLinux,
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String? payload) async {
@@ -129,9 +123,6 @@ Future<void> main() async {
 }
 
 Future<void> _configureLocalTimeZone() async {
-  if (Platform.isLinux) {
-    return;
-  }
   tz.initializeTimeZones();
   final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
@@ -303,7 +294,7 @@ class _HomePageState extends State<HomePage> {
                     await _showNotificationCustomSound();
                   },
                 ),
-                if (!Platform.isLinux) ...<Widget>[
+                if (!kIsWeb && !Platform.isLinux) ...<Widget>[
                   PaddedElevatedButton(
                     buttonText:
                     'Schedule notification to appear in 5 seconds '
@@ -316,6 +307,38 @@ class _HomePageState extends State<HomePage> {
                     buttonText: 'Repeat notification every minute',
                     onPressed: () async {
                       await _repeatNotification();
+                    },
+                  ),
+                  PaddedElevatedButton(
+                    buttonText:
+                    'Schedule daily 10:00:00 am notification in your '
+                        'local time zone',
+                    onPressed: () async {
+                      await _scheduleDailyTenAMNotification();
+                    },
+                  ),
+                  PaddedElevatedButton(
+                    buttonText:
+                    'Schedule daily 10:00:00 am notification in your '
+                        "local time zone using last year's date",
+                    onPressed: () async {
+                      await _scheduleDailyTenAMLastYearNotification();
+                    },
+                  ),
+                  PaddedElevatedButton(
+                    buttonText:
+                    'Schedule weekly 10:00:00 am notification in your '
+                        'local time zone',
+                    onPressed: () async {
+                      await _scheduleWeeklyTenAMNotification();
+                    },
+                  ),
+                  PaddedElevatedButton(
+                    buttonText:
+                    'Schedule weekly Monday 10:00:00 am notification '
+                        'in your local time zone',
+                    onPressed: () async {
+                      await _scheduleWeeklyMondayTenAMNotification();
                     },
                   ),
                   PaddedElevatedButton(
@@ -392,9 +415,26 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedElevatedButton(
-                    buttonText: 'Show big picture notification',
+                    buttonText:
+                    'Show big picture notification using local images',
                     onPressed: () async {
                       await _showBigPictureNotification();
+                    },
+                  ),
+                  PaddedElevatedButton(
+                    buttonText:
+                    'Show big picture notification using base64 String '
+                        'for images',
+                    onPressed: () async {
+                      await _showBigPictureNotificationBase64();
+                    },
+                  ),
+                  PaddedElevatedButton(
+                    buttonText:
+                    'Show big picture notification using URLs for '
+                        'Images',
+                    onPressed: () async {
+                      await _showBigPictureNotificationURL();
                     },
                   ),
                   PaddedElevatedButton(
@@ -571,144 +611,6 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ],
-                if (Platform.isLinux) ...<Widget>[
-                  const Text(
-                    'Linux-specific examples',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  FutureBuilder<LinuxServerCapabilities>(
-                    future: getLinuxCapabilities(),
-                    builder: (
-                        BuildContext context,
-                        AsyncSnapshot<LinuxServerCapabilities> snapshot,
-                        ) {
-                      if (snapshot.hasData) {
-                        final LinuxServerCapabilities caps = snapshot.data!;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                'Capabilities of the current system:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .subtitle1!
-                                    .copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
-                              _InfoValueString(
-                                title: 'Body text:',
-                                value: caps.body,
-                              ),
-                              _InfoValueString(
-                                title: 'Hyperlinks in body text:',
-                                value: caps.bodyHyperlinks,
-                              ),
-                              _InfoValueString(
-                                title: 'Images in body:',
-                                value: caps.bodyImages,
-                              ),
-                              _InfoValueString(
-                                title: 'Markup in the body text:',
-                                value: caps.bodyMarkup,
-                              ),
-                              _InfoValueString(
-                                title: 'Animated icons:',
-                                value: caps.iconMulti,
-                              ),
-                              _InfoValueString(
-                                title: 'Static icons:',
-                                value: caps.iconStatic,
-                              ),
-                              _InfoValueString(
-                                title: 'Notification persistence:',
-                                value: caps.persistence,
-                              ),
-                              _InfoValueString(
-                                title: 'Sound:',
-                                value: caps.sound,
-                              ),
-                              _InfoValueString(
-                                title: 'Other capabilities:',
-                                value: caps.otherCapabilities,
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with body markup',
-                    onPressed: () async {
-                      await _showLinuxNotificationWithBodyMarkup();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with category',
-                    onPressed: () async {
-                      await _showLinuxNotificationWithCategory();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with byte data icon',
-                    onPressed: () async {
-                      await _showLinuxNotificationWithByteDataIcon();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with theme icon',
-                    onPressed: () async {
-                      await _showLinuxNotificationWithThemeIcon();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with theme sound',
-                    onPressed: () async {
-                      await _showLinuxNotificationWithThemeSound();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with critical urgency',
-                    onPressed: () async {
-                      await _showLinuxNotificationWithCriticalUrgency();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with timeout',
-                    onPressed: () async {
-                      await _showLinuxNotificationWithTimeout();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Suppress notification sound',
-                    onPressed: () async {
-                      await _showLinuxNotificationSuppressSound();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Transient notification',
-                    onPressed: () async {
-                      await _showLinuxNotificationTransient();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Resident notification',
-                    onPressed: () async {
-                      await _showLinuxNotificationResident();
-                    },
-                  ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification on '
-                        'different screen location',
-                    onPressed: () async {
-                      await _showLinuxNotificationDifferentLocation();
-                    },
-                  ),
-                ],
               ],
             ),
           ),
@@ -824,15 +726,10 @@ class _HomePageState extends State<HomePage> {
     IOSNotificationDetails(sound: 'slow_spring_board.aiff');
     const MacOSNotificationDetails macOSPlatformChannelSpecifics =
     MacOSNotificationDetails(sound: 'slow_spring_board.aiff');
-    final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-    LinuxNotificationDetails(
-      sound: AssetsLinuxSound('sound/slow_spring_board.mp3'),
-    );
-    final NotificationDetails platformChannelSpecifics = NotificationDetails(
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
       macOS: macOSPlatformChannelSpecifics,
-      linux: linuxPlatformChannelSpecifics,
     );
     await flutterLocalNotificationsPlugin.show(
       0,
@@ -966,6 +863,65 @@ class _HomePageState extends State<HomePage> {
     final BigPictureStyleInformation bigPictureStyleInformation =
     BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
         largeIcon: FilePathAndroidBitmap(largeIconPath),
+        contentTitle: 'overridden <b>big</b> content title',
+        htmlFormatContentTitle: true,
+        summaryText: 'summary <i>text</i>',
+        htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails('big text channel id',
+        'big text channel name', 'big text channel description',
+        styleInformation: bigPictureStyleInformation);
+    final NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<String> _base64encodedImage(String url) async {
+    final http.Response response = await http.get(Uri.parse(url));
+    final String base64Data = base64Encode(response.bodyBytes);
+    return base64Data;
+  }
+
+  Future<void> _showBigPictureNotificationBase64() async {
+    final String largeIcon =
+    await _base64encodedImage('https://via.placeholder.com/48x48');
+    final String bigPicture =
+    await _base64encodedImage('https://via.placeholder.com/400x800');
+
+    final BigPictureStyleInformation bigPictureStyleInformation =
+    BigPictureStyleInformation(
+        ByteArrayAndroidBitmap.fromBase64String(
+            bigPicture), //Base64AndroidBitmap(bigPicture),
+        largeIcon: ByteArrayAndroidBitmap.fromBase64String(largeIcon),
+        contentTitle: 'overridden <b>big</b> content title',
+        htmlFormatContentTitle: true,
+        summaryText: 'summary <i>text</i>',
+        htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails('big text channel id',
+        'big text channel name', 'big text channel description',
+        styleInformation: bigPictureStyleInformation);
+    final NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<Uint8List> _getByteArrayFromUrl(String url) async {
+    final http.Response response = await http.get(Uri.parse(url));
+    return response.bodyBytes;
+  }
+
+  Future<void> _showBigPictureNotificationURL() async {
+    final ByteArrayAndroidBitmap largeIcon = ByteArrayAndroidBitmap(
+        await _getByteArrayFromUrl('https://via.placeholder.com/48x48'));
+    final ByteArrayAndroidBitmap bigPicture = ByteArrayAndroidBitmap(
+        await _getByteArrayFromUrl('https://via.placeholder.com/400x800'));
+
+    final BigPictureStyleInformation bigPictureStyleInformation =
+    BigPictureStyleInformation(bigPicture,
+        largeIcon: largeIcon,
         contentTitle: 'overridden <b>big</b> content title',
         htmlFormatContentTitle: true,
         summaryText: 'summary <i>text</i>',
@@ -1241,8 +1197,101 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true);
   }
 
+  Future<void> _scheduleDailyTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'daily scheduled notification title',
+        'daily scheduled notification body',
+        _nextInstanceOfTenAM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'daily notification channel id',
+              'daily notification channel name',
+              'daily notification description'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
 
+  /// To test we don't validate past dates when using `matchDateTimeComponents`
+  Future<void> _scheduleDailyTenAMLastYearNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'daily scheduled notification title',
+        'daily scheduled notification body',
+        _nextInstanceOfTenAMLastYear(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'daily notification channel id',
+              'daily notification channel name',
+              'daily notification description'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
 
+  Future<void> _scheduleWeeklyTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'weekly scheduled notification title',
+        'weekly scheduled notification body',
+        _nextInstanceOfTenAM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'weekly notification channel id',
+              'weekly notification channel name',
+              'weekly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+  }
+
+  Future<void> _scheduleWeeklyMondayTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'weekly scheduled notification title',
+        'weekly scheduled notification body',
+        _nextInstanceOfMondayTenAM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'weekly notification channel id',
+              'weekly notification channel name',
+              'weekly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+  }
+
+  tz.TZDateTime _nextInstanceOfTenAM() {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate =
+    tz.TZDateTime(tz.local, now.year, now.month, now.day, 10);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  tz.TZDateTime _nextInstanceOfTenAMLastYear() {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    return tz.TZDateTime(tz.local, now.year - 1, now.month, now.day, 10);
+  }
+
+  tz.TZDateTime _nextInstanceOfMondayTenAM() {
+    tz.TZDateTime scheduledDate = _nextInstanceOfTenAM();
+    while (scheduledDate.weekday != DateTime.monday) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
 
   Future<void> _showNotificationWithNoBadge() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -1749,198 +1798,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 }
-
-Future<void> _showLinuxNotificationWithBodyMarkup() async {
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with body markup',
-    '<b>bold text</b>\n'
-        '<i>italic text</i>\n'
-        '<u>underline text</u>\n'
-        'https://example.com\n'
-        '<a href="https://example.com">example.com</a>',
-    null,
-  );
-}
-
-Future<void> _showLinuxNotificationWithCategory() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    category: LinuxNotificationCategory.emailArrived(),
-  );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with category',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationWithByteDataIcon() async {
-  /// Build a simple color gradient icon.
-  final List<int> pixels = <int>[];
-  for (int y = 0; y < 255; y++) {
-    for (int x = 0; x < 255; x++) {
-      pixels..add(x)..add(y)..add(255);
-    }
-  }
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    icon: ByteDataLinuxIcon(
-      LinuxRawIconData(
-        data: Uint8List.fromList(pixels),
-        width: 255,
-        height: 255,
-      ),
-    ),
-  );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with byte data icon',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationWithThemeIcon() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    icon: ThemeLinuxIcon('media-eject'),
-  );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with theme icon',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationWithThemeSound() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    sound: ThemeLinuxSound('message-new-email'),
-  );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with theme sound',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationWithCriticalUrgency() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    urgency: LinuxNotificationUrgency.critical,
-  );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with critical urgency',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationWithTimeout() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    timeout: LinuxNotificationTimeout.fromDuration(
-      const Duration(seconds: 1),
-    ),
-  );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with timeout',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationSuppressSound() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    suppressSound: true,
-  );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'suppress notification sound',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationTransient() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    transient: true,
-  );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'transient notification',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationResident() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(
-    resident: true,
-  );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'resident notification',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationDifferentLocation() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-  LinuxNotificationDetails(location: LinuxNotificationLocation(10, 10));
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification on different screen location',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<LinuxServerCapabilities> getLinuxCapabilities() =>
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        LinuxFlutterLocalNotificationsPlugin>()!
-        .getCapabilities();
 
 class SecondPage extends StatefulWidget {
   const SecondPage(
