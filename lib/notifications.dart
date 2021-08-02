@@ -107,7 +107,14 @@ Future<void> main() async {
         selectNotificationSubject.add(payload);
       });
 
-  runApp(const HomePage());
+  // runApp(const HomePage());
+  runApp(MaterialApp(
+      title: 'Welcome to Flutter',
+      initialRoute:"/",
+      routes: {
+        "/": (context) => const HomePage()
+      },
+  ));
 }
 
 // Used for getting the time of the device.
@@ -229,16 +236,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-      return MaterialApp(
-        title: 'Welcome to Flutter',
-        home: Scaffold(
+        return Scaffold(
           appBar: AppBar(
             title: const Text('Welcome to Flutter'),
           ),
           body: const Center(
             child: Text('Hello World'),
           ),
-        ),
       );
   }
 
