@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
-import 'network_state.dart';
+import 'network_server_state.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
