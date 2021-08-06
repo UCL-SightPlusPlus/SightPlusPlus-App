@@ -1,46 +1,131 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
+import 'package:sight_plus_plus/text_to_speech_state.dart';
 
-class BluetoothBeaconState with ChangeNotifier {
-  final _regions = <Region>[];
-  late Beacon? _closestBeacon;
-  late StreamSubscription<RangingResult> _stream;
+import 'network_server_state.dart';
 
-  void getInfo() async {
+
+
+class BluetoothBeaconState{
+  List<Region> _regions = <Region>[];
+  int _closestBeacon = -1;
+  late StreamSubscription<RangingResult> _scanResultStream;
+  int _lastFloor = 0;
+  TextToSpeechState tts = TextToSpeechState();
+  StreamController<bool> connectionStreamController = StreamController<bool>();
+  late Stream connectionStream;
+  late StreamSink connectionSink;
+  bool isRunning = false;
+
+
+  void initBeaconScanner() async {
     try {
-      print(await flutterBeacon.initializeScanning);
+      connectionStream = connectionStreamController.stream;
+      connectionSink = connectionStreamController.sink;
+      tts.initTextToSpeech();
+      _regions = <Region>[];
       _regions.add(Region(identifier: 'jaalee'));
-      _stream = flutterBeacon.ranging(_regions).listen((RangingResult result) {
-        if (result.beacons.isEmpty) {
-          return;
-        }
-        _closestBeacon = null;
-        for (var b in result.beacons) {
-          print(b.minor.toString() + ", " + b.accuracy.toString());
-          if (_closestBeacon == null) {
-            if (b.accuracy > 0.0 && b.accuracy <= 0.3) {
-              _closestBeacon = b;
-            }
-          } else if (_closestBeacon!.accuracy > b.accuracy &&
-              b.accuracy > 0.0 &&
-              b.accuracy <= 0.4) {
-            _closestBeacon = b;
-          }
-        }
-        notifyListeners();
-      });
+      startStream();
+      checkIP();
     } catch (e) {
       print(e);
     }
   }
 
-  void stopScanning() {
-    _stream.cancel();
+  void checkIP(){
+    if(NetworkState.ip == ''){
+      print("Stop bluetooth");
+      connectionSink.add(false);
+    }else{
+      connectionSink.add(true);
+    }
   }
 
-  get stream => _stream;
+  void startStream() {
+    connectionStream.listen((event) async {
+      if (!event) {
+        if(isRunning){
+          print("Not scanning");
+          stopScanning();
+        }
+      } else {
+        if(!isRunning){
+          print("Scanning");
+          startScanning();
+        }
+      }
+      Future.delayed(const Duration(milliseconds: 5000), (){
+        checkIP();
+      });
+    });
+  }
+
+  void stopTTS(){
+    tts.stop();
+  }
+
+  void startScanning(){
+    isRunning = true;
+    _scanResultStream = flutterBeacon.ranging(_regions).listen((RangingResult result) {
+      if (result.beacons.isEmpty) {
+        return;
+      }
+      int tempBeacon = _closestBeacon;
+      double tempAccuracy = -1.0;
+      if(_closestBeacon != -1){
+        for(var b in result.beacons){
+          if(b.minor == _closestBeacon){
+            if(b.accuracy <= 1.0 && b.accuracy > 0){
+              tempAccuracy = b.accuracy;
+            }
+            break;
+          }
+        }
+      }
+      for (var b in result.beacons) {
+        print(b.minor.toString() + ", " + b.accuracy.toString());
+        if (_closestBeacon == -1) {
+          if (b.accuracy > 0.0 && b.accuracy <= 1.0) {
+            _closestBeacon = b.minor;
+            tempAccuracy = b.accuracy;
+          }
+        } else {
+          if(tempAccuracy != -1.0){
+            if(b.accuracy < tempAccuracy){
+              _closestBeacon = b.minor;
+              tempAccuracy = b.accuracy;
+            }
+          }else if(b.accuracy > 0 && b.accuracy <= 1.0){
+              _closestBeacon = b.minor;
+          }
+        }
+      }
+      print(_closestBeacon);
+      if(NetworkState.ip != '' && tempBeacon != _closestBeacon && _closestBeacon != -1){
+        print("http://${NetworkState.ip}:9999/records/$_closestBeacon?lastFloor=$_lastFloor");
+        Dio().get("http://${NetworkState.ip}:9999/records/$_closestBeacon?lastFloor=$_lastFloor").then((response){
+          print(response.data);
+          _lastFloor = response.data['floor'];
+          String serverMessage = response.data['sentence'];
+          tts.start(serverMessage);
+        });
+      }
+    });
+  }
+
+  void stopScanning() {
+    isRunning = false;
+    _scanResultStream.cancel();
+  }
+
+  get scanResultStream => _scanResultStream;
+
   get regions => _regions;
-  get cloestBeacon => _closestBeacon;
+
+  get closestBeacon => _closestBeacon;
+
+  get lastFloor => _lastFloor;
 }

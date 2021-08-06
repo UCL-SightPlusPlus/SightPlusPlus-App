@@ -8,18 +8,27 @@ import 'package:wifi_iot/wifi_iot.dart';
 
 class NetworkState with ChangeNotifier{
   bool connected = false;
-  String ip = "";
-  final StreamController<bool> _connectionStreamController = StreamController<bool>();
+  static String ip = "";
+  final StreamController<bool> _connectionStreamController =
+      StreamController<bool>();
   late StreamSink _connectionSink;
   late Stream _connectionStream;
 
-  void startStream(){
+  void setConnected(bool connection) {
+    connected = connection;
+  }
+
+  void initNetworkConnection(){
     _connectionStream = _connectionStreamController.stream;
     _connectionSink = _connectionStreamController.sink;
+    startStream();
+    getConnection();
+  }
+
+  void startStream() {
     _connectionStream.listen((event) async {
       print('Receive new result');
       if (!event) {
-        ip = '';
         print('Connection failed. Scan again');
       } else {
         print('Connected');
@@ -31,21 +40,24 @@ class NetworkState with ChangeNotifier{
     });
   }
 
-  void getConnection() async{
+  void getConnection() async {
+
     this.connected = false;
     bool connected = await WiFiForIoTPlugin.isConnected();
-    if(connected){
+    if (connected) {
       String? ssid = await WiFiForIoTPlugin.getSSID();
-      if(ssid != null && ssid.contains("Sight++") && ip != ''){
+      if (ssid != null && ssid.contains("Sight++") && ip != '') {
         this.connected = true;
         _connectionSink.add(true);
+      }else{
+        ip = "";
       }
     }
     connectToWifi();
   }
 
-  void connectToWifi() async{
-    if(connected){
+  void connectToWifi() async {
+    if (connected) {
       return;
     }
     bool networkFound = false;
@@ -68,6 +80,7 @@ class NetworkState with ChangeNotifier{
     }
   }
 
+  //This function can get the local server's IP through UDP broadcast.
   void getIP() async {
     try {
       var data = "Sight++";
@@ -79,7 +92,7 @@ class NetworkState with ChangeNotifier{
           .then((RawDatagramSocket socket) {
         socket.broadcastEnabled = true;
         socket.listen((event) async {
-          try{
+          try {
             Datagram? dg = socket.receive();
             if (dg != null) {
               //If the server responses with 'approve', store the server's ip.
@@ -89,11 +102,11 @@ class NetworkState with ChangeNotifier{
                 _connectionSink.add(true);
               }
             }
-          }catch (exception){
+          } catch (exception) {
+            ip = "";
             _connectionSink.add(false);
             print(exception);
           }
-
         });
         //Send broadcast message.
         socket.send(dataToSend, broadcastAddress, 9999);
@@ -104,15 +117,15 @@ class NetworkState with ChangeNotifier{
     }
   }
 
-  void sendRequest(){
-  Dio().get("http://" + ip + ":9999/records?lastFloor=1").then((response){
-    print(response.data);
-  });
-  }
-
-  set setIP(String ip){
-    this.ip = ip;
-    notifyListeners();
+  void updateInfo({required int lastFloor, data}) {
+    if(data != null){
+      print(data);
+      Dio().post("http://" + ip + ":9999/records", data: data);
+    }else{
+      Dio().get("http://" + ip + ":9999/records?lastFloor="+lastFloor.toString()).then((response) {
+        print(response.data);
+      });
+    }
   }
 
 }

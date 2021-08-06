@@ -1,6 +1,8 @@
 import 'package:flutter_speech/flutter_speech.dart';
 import 'package:flutter/material.dart';
 
+import 'network_server_state.dart';
+
 List<Language> languages = [
   const Language('English', 'en_US'),
   const Language('Francais', 'fr_FR'),
@@ -9,10 +11,11 @@ List<Language> languages = [
   const Language('Español', 'es_ES'),
 ];
 
-class SpeechToTextState with ChangeNotifier {
+class SpeechToTextState with ChangeNotifier{
   late SpeechRecognition _speech;
   bool _speechRecognitionAvailable = false;
   bool _isListening = false;
+  bool _canStart = false;
   String _transcription = '';
   Language _selectedLang = languages.first;
 
@@ -37,7 +40,6 @@ class SpeechToTextState with ChangeNotifier {
   void onCurrentLocale(String locale) {
     print('_MyAppState.onCurrentLocale... $locale');
     _selectedLang = languages.firstWhere((l) => l.code == locale);
-    notifyListeners();
   }
 
   void onRecognitionStarted() {
@@ -48,7 +50,6 @@ class SpeechToTextState with ChangeNotifier {
   void onRecognitionResult(String text) {
     print('_MyAppState.onRecognitionResult... $text');
     _transcription = text;
-    notifyListeners();
   }
 
   void onRecognitionComplete(String text) {
@@ -66,24 +67,23 @@ class SpeechToTextState with ChangeNotifier {
     child: Text(l.name),
   )).toList();
 
-  void start() => _speech.activate(selectedLang.code).then((_) {
-    print("Lang: "+_selectedLang.name);
-    return _speech.listen().then((result) {
-      print('_VoiceCommandState.start => result $result');
-      _transcription = "";
-      _isListening = result;
-      notifyListeners();
+  void start() {
+    _speech.activate(selectedLang.code).then((_) {
+        return _speech.listen().then((result) {
+          _transcription = "";
+          _isListening = result;
+        });
     });
-  });
+  }
 
-  void stop() => _speech.stop().then((_) async {
-    _isListening = false;
-    notifyListeners();
-  });
+  void stop(){
+    _speech.stop().then((_) async {
+      _isListening = false;
+    });
+  }
 
   void selectLangHandler(Language lang) {
     _selectedLang = lang;
-    notifyListeners();
   }
 
   get speechRecognitionAvailable => _speechRecognitionAvailable;
@@ -93,6 +93,8 @@ class SpeechToTextState with ChangeNotifier {
   get transcription => _transcription;
 
   get selectedLang => _selectedLang;
+
+  get canStart => _speechRecognitionAvailable && !_isListening;
 }
 
 
