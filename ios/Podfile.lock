@@ -1,10 +1,16 @@
 PODS:
+  - device_info (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
-  - flutter_beacon (0.3.0):
+  - flutter_local_notifications (0.0.1):
+    - Flutter
+  - flutter_native_timezone (0.0.1):
     - Flutter
   - flutter_speech (0.0.1):
     - Flutter
   - flutter_tts (0.0.1):
+    - Flutter
+  - path_provider (0.0.1):
     - Flutter
   - text_to_speech (0.0.1):
     - Flutter
@@ -12,32 +18,44 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - device_info (from `.symlinks/plugins/device_info/ios`)
   - Flutter (from `Flutter`)
-  - flutter_beacon (from `.symlinks/plugins/flutter_beacon/ios`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
+  - flutter_native_timezone (from `.symlinks/plugins/flutter_native_timezone/ios`)
   - flutter_speech (from `.symlinks/plugins/flutter_speech/ios`)
   - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - text_to_speech (from `.symlinks/plugins/text_to_speech/ios`)
   - wifi_iot (from `.symlinks/plugins/wifi_iot/ios`)
 
 EXTERNAL SOURCES:
+  device_info:
+    :path: ".symlinks/plugins/device_info/ios"
   Flutter:
     :path: Flutter
-  flutter_beacon:
-    :path: ".symlinks/plugins/flutter_beacon/ios"
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
+  flutter_native_timezone:
+    :path: ".symlinks/plugins/flutter_native_timezone/ios"
   flutter_speech:
     :path: ".symlinks/plugins/flutter_speech/ios"
   flutter_tts:
     :path: ".symlinks/plugins/flutter_tts/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
   text_to_speech:
     :path: ".symlinks/plugins/text_to_speech/ios"
   wifi_iot:
     :path: ".symlinks/plugins/wifi_iot/ios"
 
 SPEC CHECKSUMS:
+  device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  flutter_beacon: 2525df9d96b904623f325968a73bac805e648119
+  flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
+  flutter_native_timezone: 5f05b2de06c9776b4cc70e1839f03de178394d22
   flutter_speech: d3db868ad1b390b5f6ac7308ec09b6b608545c03
   flutter_tts: 0f492aab6accf87059b72354fcb4ba934304771d
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   text_to_speech: 8669facdbd5b72d2939b810493defd991634f6f9
   wifi_iot: b5aafd6f9b52f8a357383a1deabab45f31cd602d
 
