@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 class NetworkState with ChangeNotifier{
@@ -13,20 +14,40 @@ class NetworkState with ChangeNotifier{
       StreamController<bool>();
   late StreamSink _connectionSink;
   late Stream _connectionStream;
+  StreamSubscription? _connectionSub;
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   void setConnected(bool connection) {
     connected = connection;
   }
 
-  void initNetworkConnection(){
-    _connectionStream = _connectionStreamController.stream;
-    _connectionSink = _connectionStreamController.sink;
-    startStream();
-    getConnection();
+  void initNetworkConnection(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin){
+    if(_connectionSub == null){
+      _connectionStream = _connectionStreamController.stream;
+      _connectionSink = _connectionStreamController.sink;
+      _connectionSub = startStream();
+      getConnection();
+      this.flutterLocalNotificationsPlugin = flutterLocalNotificationsPlugin;
+    }
   }
 
-  void startStream() {
-    _connectionStream.listen((event) async {
+  void _showNotification(String payload) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    // I don't think we need to word about the first argument here. That's for communicating with FCM.
+    AndroidNotificationDetails(
+        'finder_001', 'Sight++ Finder', 'Alerts you if a Sight++ location is found',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    flutterLocalNotificationsPlugin.show(
+        0, 'Location Found', 'Open To Connect', platformChannelSpecifics
+        ,payload: payload);
+  }
+
+  StreamSubscription startStream() {
+    return _connectionStream.listen((event) async {
       print('Receive new result');
       if (!event) {
         print('Connection failed. Scan again');
@@ -53,20 +74,12 @@ class NetworkState with ChangeNotifier{
         ip = "";
       }
     }
-    connectToWifi();
+    getSSID();
   }
 
-  void connectToWifi() async {
-    if (connected) {
-      return;
-    }
-    bool networkFound = false;
-    try {
-      //Replace the ssid and password to yours setting.
-      networkFound = await WiFiForIoTPlugin.connect("Sight++",
-          password: "liuzhaoxi", security: NetworkSecurity.WPA);
-      //If the network is public, use the following one.
-      //networkFound = await WiFiForIoTPlugin.connect("YOUR_SSID");
+  void connectToWifi(String ssid) async{
+    try{
+      bool networkFound = await WiFiForIoTPlugin.connect(ssid, password: 'liuzhaoxi', security: NetworkSecurity.WPA);
       if (!networkFound) {
         connected = false;
         _connectionSink.add(false);
@@ -74,6 +87,30 @@ class NetworkState with ChangeNotifier{
         await WiFiForIoTPlugin.forceWifiUsage(true);
         getIP();
       }
+    }catch (exception){
+      _connectionSink.add(false);
+      print(exception);
+    }
+
+  }
+
+  void getSSID() async {
+    if (connected) {
+      return;
+    }
+    try {
+      List<WifiNetwork> wifi = await WiFiForIoTPlugin.loadWifiList();
+      for(var network in wifi){
+        if(network.ssid.toString().contains("Sight++")){
+          print('found');
+          _showNotification(network.ssid.toString());
+          break;
+        }
+      }
+      //Replace the ssid and password to yours setting.
+      //networkFound = await WiFiForIoTPlugin.connect("Sight++",password: "liuzhaoxi", security: NetworkSecurity.WPA);
+      //If the network is public, use the following one.
+      //networkFound = await WiFiForIoTPlugin.connect("YOUR_SSID");
     } catch (exception) {
       _connectionSink.add(false);
       print(exception);
@@ -101,6 +138,8 @@ class NetworkState with ChangeNotifier{
                 print(ip);
                 _connectionSink.add(true);
               }
+            }else{
+              _connectionSink.add(false);
             }
           } catch (exception) {
             ip = "";
