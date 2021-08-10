@@ -23,19 +23,33 @@ class FirstScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(100, 73, 73, 73),
       appBar: AppBar(
         title: const Text('First Screen'),
       ),
       body: Center(
-        child: ElevatedButton(
-          // Within the `FirstScreen` widget
-          onPressed: () {
-            // Navigate to the second screen using a named route.
-            Navigator.pushNamed(context, '/second');
-            // If you want to remove the capability of allowing the user to go back to the previous screen, uncomment the line under this and comment the line above.
-            // Navigator.pushReplacementNamed(context,'/second');
-          },
-          child: const Text('Launch screen'),
+        child: Column(
+          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          children:[
+            const Text('Not connected', style: TextStyle(color:Colors.white,fontSize:18.0)),
+            Container(
+              width:200,
+              height: 200,
+              decoration: const BoxDecoration(
+                color:Colors.blue,
+                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.wifi,size:150,color: Colors.white,),
+                // Within the `FirstScreen` widget
+                onPressed: () {
+                  // Navigate to the second screen using a named route.
+                  Navigator.pushNamed(context, '/second');
+                },
+              ),
+            ),
+            const Text('Searching for Sight++ Location ...',style: TextStyle(color:Colors.white,fontSize:18.0)),
+          ],
         ),
       ),
     );
@@ -48,18 +62,33 @@ class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(100, 35, 41, 129),
       appBar: AppBar(
         title: const Text('Second Screen'),
       ),
       body: Center(
-        child: ElevatedButton(
-          // Within the SecondScreen widget
-          onPressed: () {
-            // Navigate back to the first screen by popping the current route
-            // off the stack.
-            Navigator.pop(context);
-          },
-          child: const Text('Go back!'),
+        child: Column(
+          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          children:[
+            const Text('Connected, Searching for Bluetooth Beacon ...', style: TextStyle(color:Colors.white,fontSize:18.0)),
+            Container(
+              width:200,
+              height: 200,
+              decoration: const BoxDecoration(
+                color:Colors.blue,
+                borderRadius:BorderRadius.all(Radius.circular(80.0)),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                // Within the `FirstScreen` widget
+                onPressed: () {
+                  // Navigate to the second screen using a named route.
+                  Navigator.pushNamed(context, '/second');
+                },
+              ),
+            ),
+            const Text('Hold To Record',style: TextStyle(color:Colors.white,fontSize:18.0)),
+          ],
         ),
       ),
     );
