@@ -12,7 +12,7 @@ void main() {
         '/': (context) => const SearchingScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/second': (context) => const PermissionScreen(),
-        '/third':(context) => const SecondScreen(),
+        '/third':(context) => const BluetoothScreen(),
       },
     ),
   );
@@ -103,27 +103,24 @@ class PermissionScreen extends StatelessWidget {
 
 
 
-class SecondScreen extends StatelessWidget {
-  const SecondScreen({Key? key}) : super(key: key);
+class BluetoothScreen extends StatelessWidget {
+  const BluetoothScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(100, 35, 41, 129),
-      appBar: AppBar(
-        title: const Text('Second Screen'),
-      ),
+      backgroundColor: const Color(0xf5232981),
       body: Center(
         child: Column(
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
-            const Text('Connected, Searching for Bluetooth Beacon ...', style: TextStyle(color:Colors.white,fontSize:18.0)),
+            const Text('Connected, Searching For Bluetooth Beacon ...', style: TextStyle(color:Colors.white,fontSize:30.0)),
             Container(
-              width:200,
-              height: 200,
+              width:250,
+              height: 250,
               decoration: const BoxDecoration(
                 color:Colors.blue,
-                borderRadius:BorderRadius.all(Radius.circular(80.0)),
+                borderRadius:BorderRadius.all(Radius.circular(120.0)),
               ),
               child: IconButton(
                 icon: const Icon(Icons.mic,size:150,color: Colors.white,),
@@ -134,7 +131,8 @@ class SecondScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Hold To Record',style: TextStyle(color:Colors.white,fontSize:18.0)),
+            const Text('Hold To Record',textAlign: TextAlign.center,
+                style: TextStyle(color:Colors.white,fontSize:24.0)),
           ],
         ),
       ),
