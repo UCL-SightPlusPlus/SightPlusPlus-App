@@ -78,6 +78,7 @@ class SpeechToTextState with ChangeNotifier{
 
   void stop(){
     _speech.stop().then((_) async {
+      print("AAAAAstop");
       _isListening = false;
     });
   }

@@ -275,10 +275,10 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
           appBar: AppBar(
               title: const Text("Sight++")
           ),
-          body: TestButton(beacon),
+          body: AskButton(beacon),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              _showNotification();
+              Provider.of<SpeechToTextState>(context, listen:false).stop();
             },
           ),
         );
@@ -287,9 +287,9 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
 
 }
 
-class TestButton extends StatelessWidget{
+class AskButton extends StatelessWidget{
   BluetoothBeaconState beacon;
-  TestButton(this.beacon);
+  AskButton(this.beacon);
 
   @override
   Widget build(BuildContext context) {
@@ -306,13 +306,15 @@ class TestButton extends StatelessWidget{
                           beacon.stopTTS();
                           Provider.of<SpeechToTextState>(context, listen: false).start();
                         },
+
                         onTapUp: (details) {
                           Provider.of<SpeechToTextState>(context, listen: false).stop();
                           if(Provider.of<SpeechToTextState>(context, listen: false).transcription != ''){
-                            var data = {'message':Provider.of<SpeechToTextState>(context, listen: false).transcription};
-                            Provider.of<NetworkState>(context, listen: false).updateInfo(lastFloor: beacon.lastFloor, data: data);
+                            var data = {'question':Provider.of<SpeechToTextState>(context, listen: false).transcription};
+                            beacon.updateInfo(data);
                           }
                         },
+
                         child: Container(
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(

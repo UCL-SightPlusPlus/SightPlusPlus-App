@@ -13,7 +13,7 @@ class BluetoothBeaconState{
   List<Region> _regions = <Region>[];
   int _closestBeacon = -1;
   late StreamSubscription<RangingResult> _scanResultStream;
-  int _lastFloor = 0;
+  int _lastFloor = 1;
   TextToSpeechState tts = TextToSpeechState();
   StreamController<bool> connectionStreamController = StreamController<bool>();
   late Stream connectionStream;
@@ -105,8 +105,8 @@ class BluetoothBeaconState{
       }
       print(_closestBeacon);
       if(NetworkState.ip != '' && tempBeacon != _closestBeacon && _closestBeacon != -1){
-        print("http://${NetworkState.ip}:9999/records/$_closestBeacon?lastFloor=$_lastFloor");
-        Dio().get("http://${NetworkState.ip}:9999/records/$_closestBeacon?lastFloor=$_lastFloor").then((response){
+        print("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor");
+        Dio().get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response){
           print(response.data);
           _lastFloor = response.data['floor'];
           String serverMessage = response.data['sentence'];
@@ -114,6 +114,10 @@ class BluetoothBeaconState{
         });
       }
     });
+  }
+
+  void updateInfo(data){
+    Dio().post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: data).then((response) => tts.start(response.data['sentence']));
   }
 
   void stopScanning() {

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:sight_plus_plus/text_to_speech_state.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 class NetworkState with ChangeNotifier{
@@ -16,6 +16,7 @@ class NetworkState with ChangeNotifier{
   late Stream _connectionStream;
   StreamSubscription? _connectionSub;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  TextToSpeechState tts = TextToSpeechState();
 
   void setConnected(bool connection) {
     connected = connection;
@@ -23,6 +24,7 @@ class NetworkState with ChangeNotifier{
 
   void initNetworkConnection(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin){
     if(_connectionSub == null){
+      tts.initTextToSpeech();
       _connectionStream = _connectionStreamController.stream;
       _connectionSink = _connectionStreamController.sink;
       _connectionSub = startStream();
@@ -62,7 +64,6 @@ class NetworkState with ChangeNotifier{
   }
 
   void getConnection() async {
-
     this.connected = false;
     bool connected = await WiFiForIoTPlugin.isConnected();
     if (connected) {
@@ -104,9 +105,10 @@ class NetworkState with ChangeNotifier{
         if(network.ssid.toString().contains("Sight++")){
           print('found');
           _showNotification(network.ssid.toString());
-          break;
+          return;
         }
       }
+      _connectionSink.add(false);
       //Replace the ssid and password to yours setting.
       //networkFound = await WiFiForIoTPlugin.connect("Sight++",password: "liuzhaoxi", security: NetworkSecurity.WPA);
       //If the network is public, use the following one.
@@ -153,17 +155,6 @@ class NetworkState with ChangeNotifier{
     } catch (exception) {
       _connectionSink.add(false);
       print(exception);
-    }
-  }
-
-  void updateInfo({required int lastFloor, data}) {
-    if(data != null){
-      print(data);
-      Dio().post("http://" + ip + ":9999/records", data: data);
-    }else{
-      Dio().get("http://" + ip + ":9999/records?lastFloor="+lastFloor.toString()).then((response) {
-        print(response.data);
-      });
     }
   }
 

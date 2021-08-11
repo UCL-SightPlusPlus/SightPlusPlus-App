@@ -32,7 +32,7 @@ dependencies:
   udp: ^3.0.3
   dio: ^4.0.0
   flutter_speech: ^2.0.0
-  flutter_tts: ^3.2.1
+  flutter_tts: ^3.2.2
   text_to_speech: ^0.1.0
   flutter_beacon: ^0.5.0
   provider: ^5.0.0
