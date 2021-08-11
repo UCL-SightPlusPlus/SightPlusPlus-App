@@ -20,26 +20,31 @@ void main() {
 class FirstScreen extends StatelessWidget {
   const FirstScreen({Key? key}) : super(key: key);
 
+  final _isConnected = '';
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(100, 73, 73, 73),
-      appBar: AppBar(
-        title: const Text('First Screen'),
-      ),
+      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
+      backgroundColor: const Color(0xf5747474),
       body: Center(
         child: Column(
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
-            const Text('Not connected', style: TextStyle(color:Colors.white,fontSize:18.0)),
             Container(
-              width:200,
-              height: 200,
+              child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+            ),
+            Container(
+              width:250,
+              height: 250,
               decoration: const BoxDecoration(
-                color:Colors.blue,
-                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                color:Color(0xe21e90ff),
+                borderRadius:BorderRadius.all(Radius.circular(120.0)),
               ),
               child: IconButton(
+                // We could also use the is icon maybe. It's for searching.
+                // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
                 icon: const Icon(Icons.wifi,size:150,color: Colors.white,),
                 // Within the `FirstScreen` widget
                 onPressed: () {
@@ -48,7 +53,8 @@ class FirstScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Searching for Sight++ Location ...',style: TextStyle(color:Colors.white,fontSize:18.0)),
+              const Text('Searching for Sight++ Location', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:30.0)),
           ],
         ),
       ),
