@@ -102,7 +102,6 @@ class PermissionScreen extends StatelessWidget {
 }
 
 
-
 class BluetoothScreen extends StatelessWidget {
   const BluetoothScreen({Key? key}) : super(key: key);
 
@@ -114,7 +113,9 @@ class BluetoothScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
-            const Text('Connected, Searching For Bluetooth Beacon ...', style: TextStyle(color:Colors.white,fontSize:30.0)),
+            const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
+
+            const Text('Searching For Bluetooth Beacon', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
             Container(
               width:250,
               height: 250,
