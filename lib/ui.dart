@@ -13,6 +13,9 @@ void main() {
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/second': (context) => const PermissionScreen(),
         '/third':(context) => const BluetoothScreen(),
+        '/four':(context) => const ConnectedScreen(),
+        '/five':(context) => const ListeningScreen(),
+        '/six':(context) => const WorkingScreen(),
       },
     ),
   );
@@ -37,7 +40,7 @@ class SearchingScreen extends StatelessWidget {
               width:250,
               height: 250,
               decoration: const BoxDecoration(
-                color:Color(0xe21e90ff),
+                color:Color(0xff0b7ae6),
                 borderRadius:BorderRadius.all(Radius.circular(120.0)),
               ),
               child: IconButton(
@@ -79,7 +82,7 @@ class PermissionScreen extends StatelessWidget {
               width:250,
               height: 250,
               decoration: const BoxDecoration(
-                color:Color(0xe21e90ff),
+                color:Color(0xff0b7ae6),
                 borderRadius:BorderRadius.all(Radius.circular(120.0)),
               ),
               child: IconButton(
@@ -108,7 +111,7 @@ class BluetoothScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xf5232981),
+      backgroundColor: const Color(0xff232981),
       body: Center(
         child: Column(
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
@@ -120,7 +123,7 @@ class BluetoothScreen extends StatelessWidget {
               width:250,
               height: 250,
               decoration: const BoxDecoration(
-                color:Colors.blue,
+                color:Color(0xff0b7ae6),
                 borderRadius:BorderRadius.all(Radius.circular(120.0)),
               ),
               child: IconButton(
@@ -128,12 +131,141 @@ class BluetoothScreen extends StatelessWidget {
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
-                  Navigator.pushNamed(context, '/second');
+                  Navigator.pushNamed(context, '/four');
                 },
               ),
             ),
             const Text('Hold To Record',textAlign: TextAlign.center,
                 style: TextStyle(color:Colors.white,fontSize:24.0)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class ConnectedScreen extends StatelessWidget {
+  const ConnectedScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
+      backgroundColor: const Color(0xff1e90ff),
+      body: Center(
+        child: Column(
+          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          children:[
+            Container(
+              child: const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+            ),
+            Container(
+              width:250,
+              height: 250,
+              decoration: const BoxDecoration(
+                color:Color(0xff0b7ae6),
+                borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              ),
+              child: IconButton(
+                // We could also use the is icon maybe. It's for searching.
+                // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                // Within the `FirstScreen` widget
+                onPressed: () {
+                  // Navigate to the second screen using a named route.
+                  Navigator.pushNamed(context, '/five');
+                },
+              ),
+            ),
+            const Text('Hold To Record', textAlign: TextAlign.center,
+                style: TextStyle(color:Colors.white,fontSize:30.0)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class ListeningScreen extends StatelessWidget {
+  const ListeningScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
+      backgroundColor: const Color(0xffb61316),
+      body: Center(
+        child: Column(
+          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          children:[
+            Container(
+              child: const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+            ),
+            Container(
+              width:250,
+              height: 250,
+              decoration: const BoxDecoration(
+                color:Color(0xff0b7ae6),
+                borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              ),
+              child: IconButton(
+                // We could also use the is icon maybe. It's for searching.
+                // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                // Within the `FirstScreen` widget
+                onPressed: () {
+                  // Navigate to the second screen using a named route.
+                  Navigator.pushNamed(context, '/six');
+                },
+              ),
+            ),
+            const Text('Listening', textAlign: TextAlign.center,
+                style: TextStyle(color:Colors.white,fontSize:30.0)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class WorkingScreen extends StatelessWidget {
+  const WorkingScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
+      backgroundColor: const Color(0xff1e90ff),
+      body: Center(
+        child: Column(
+          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          children:[
+            Container(
+              child: const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+            ),
+            Container(
+              width:250,
+              height: 250,
+              decoration: const BoxDecoration(
+                color:Color(0xff0b7ae6),
+                borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              ),
+              child: IconButton(
+                // We could also use the is icon maybe. It's for searching.
+                // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                // Within the `FirstScreen` widget
+                onPressed: () {
+                  // Navigate to the second screen using a named route.
+                  Navigator.pushNamed(context, '/');
+                },
+              ),
+            ),
+            const Text('Working', textAlign: TextAlign.center,
+                style: TextStyle(color:Colors.white,fontSize:30.0)),
           ],
         ),
       ),
