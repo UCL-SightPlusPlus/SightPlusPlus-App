@@ -1,33 +1,30 @@
 import 'package:text_to_speech/text_to_speech.dart';
+import 'package:translator/translator.dart';
 
 class TextToSpeechState{
   final TextToSpeech _tts = TextToSpeech();
   var languages = [];
-  String? language;
-  String? languageCode;
+  String _languageCode = '';
   List<String> languageCodes = [];
   String? voice;
 
 
-  void initTextToSpeech() async{
-    languageCodes = await _tts.getLanguages();
-    // get default language
-    final String? defaultLangCode = await _tts.getDefaultLanguage();
-    if (defaultLangCode != null && languageCodes.contains(defaultLangCode)) {
-      languageCode = defaultLangCode;
-    } else {
-      languageCode = languages.first.code;
-    }
+  void initTextToSpeech({String languageCode = "en"}) async{
     // get voice
-    voice = await getVoiceByLang(languageCode!);
+    if(languageCode == 'zh'){
+      languageCode = 'zh-cn';
+    }
+    _languageCode = languageCode;
+    voice = await getVoiceByLang(_languageCode);
   }
 
   void start(String message) {
-    if (languageCode != null) {
-      _tts.setLanguage(languageCode!);
-    }
+    String after = '';
     _tts.setVolume(1.0);
-    _tts.speak(message);
+    GoogleTranslator().translate(message, to:'zh-cn').then((value){
+      after = '$value';
+      _tts.speak(after);
+    });
   }
 
   void stop(){
@@ -35,7 +32,7 @@ class TextToSpeechState{
   }
 
   Future<String?> getVoiceByLang(String lang) async {
-    List<String> voices = await _tts.getVoiceByLang(languageCode!);
+    List<String> voices = await _tts.getVoiceByLang(_languageCode);
     if (voices.isNotEmpty) {
       return voices.first;
     }

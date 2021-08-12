@@ -9,25 +9,25 @@ import 'network_server_state.dart';
 
 
 
-class BluetoothBeaconState{
+class BluetoothBeaconState with ChangeNotifier{
   List<Region> _regions = <Region>[];
   int _closestBeacon = -1;
   late StreamSubscription<RangingResult> _scanResultStream;
-  int _lastFloor = 1;
+  int _lastFloor = 0;
   TextToSpeechState tts = TextToSpeechState();
-  StreamController<bool> connectionStreamController = StreamController<bool>();
-  late Stream connectionStream;
-  late StreamSink connectionSink;
+  String autoMessage = '';
+  String userMessage = '';
+  final StreamController<bool> _connectionStreamController = StreamController<bool>();
   bool isRunning = false;
 
 
   void initBeaconScanner() async {
     try {
-      connectionStream = connectionStreamController.stream;
-      connectionSink = connectionStreamController.sink;
-      tts.initTextToSpeech();
+
       _regions = <Region>[];
-      _regions.add(Region(identifier: 'jaalee'));
+      if(!_regions.contains(Region(identifier: 'jaalee'))){
+        _regions.add(Region(identifier: 'jaalee'));
+      }
       startStream();
       checkIP();
     } catch (e) {
@@ -35,17 +35,21 @@ class BluetoothBeaconState{
     }
   }
 
+  void initTextToSpeech({String languageCode = 'en'}){
+    tts.initTextToSpeech(languageCode:languageCode);
+  }
+
   void checkIP(){
     if(NetworkState.ip == ''){
       print("Stop bluetooth");
-      connectionSink.add(false);
+      _connectionStreamController.add(false);
     }else{
-      connectionSink.add(true);
+      _connectionStreamController.add(true);
     }
   }
 
   void startStream() {
-    connectionStream.listen((event) async {
+    _connectionStreamController.stream.listen((event) async {
       if (!event) {
         if(isRunning){
           print("Not scanning");
@@ -103,21 +107,24 @@ class BluetoothBeaconState{
           }
         }
       }
-      print(_closestBeacon);
       if(NetworkState.ip != '' && tempBeacon != _closestBeacon && _closestBeacon != -1){
         print("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor");
         Dio().get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response){
-          print(response.data);
           _lastFloor = response.data['floor'];
-          String serverMessage = response.data['sentence'];
-          tts.start(serverMessage);
+          autoMessage = response.data['sentence'];
+          tts.start(autoMessage);
         });
       }
+      notifyListeners();
     });
   }
 
   void updateInfo(data){
-    Dio().post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: data).then((response) => tts.start(response.data['sentence']));
+    Dio().post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: data).then((response) {
+      tts.start(response.data['sentence']);
+      userMessage = response.data['sentence'];
+      notifyListeners();
+    });
   }
 
   void stopScanning() {

@@ -1,356 +1,355 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:io' show Platform;
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
-import 'package:flutter_speech/flutter_speech.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:text_to_speech/text_to_speech.dart';
-import 'package:wifi_iot/wifi_iot.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:sight_plus_plus/bluetooth_beacon_state.dart';
+import 'package:sight_plus_plus/network_server_state.dart';
+import 'package:sight_plus_plus/speech_to_text_state.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-void main() {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+String? languageCode;
+
+/// Streams are created so that app can respond to notification-related events
+/// since the plugin is initialised in  the `main` function
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
+BehaviorSubject<ReceivedNotification>();
+
+final StreamController<String?> selectNotificationSubject =
+StreamController<String?>();
+
+const MethodChannel platform =
+MethodChannel('sightplusplus');
+
+class ReceivedNotification {
+  ReceivedNotification({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.payload,
+  });
+
+  final int id;
+  final String? title;
+  final String? body;
+  final String? payload;
+}
+
+String? selectedNotificationPayload;
+
+
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isIOS) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-  } else if (Platform.isAndroid) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.android;
-  }
-  runApp(SightPlusPlus());
-}
-
-//Scanning the WiFi in the area and connect to the one which SSID contains "Sight++"
-class SightPlusPlus extends StatefulWidget {
-  SightPlusPlus({Key? key}) : super(key: key);
-
-  @override
-  SightPlusPlusState createState() => SightPlusPlusState();
-}
-
-class SightPlusPlusState extends State<SightPlusPlus> {
-  //variables that required by WiFi and server connection.
-  String ip = "";
-  StreamController<bool> _connectionStreamController = StreamController<bool>();
-  late Stream _connectionStream;
-  late StreamSink _connectionSink;
-
-  //variables that required by STT.
-  late SpeechRecognition _speech;
-  bool _speechRecognitionAvailable = false;
-  bool _isListening = false;
-  String transcription = '';
-  String serverMessage = '';
-  Language selectedLang = languages.first;
-
-  //variables that required by TTS
-  late TextToSpeech _tts;
-  String? language;
-  String? languageCode;
-  List<String> languageCodes = [];
-  String? voice;
-
-  //Check the WiFi is connected or not
-  void getConnection() async {
-    bool result = false;
-    bool connected = await WiFiForIoTPlugin.isConnected();
-    if (connected) {
-      String? name = await WiFiForIoTPlugin.getSSID();
-      if (name != null && name.contains("Sight++") && ip != '') {
-        result = true;
-      }
-    }
-    _connectionSink.add(result);
+  await _configureLocalTimeZone();
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform
+      .isLinux
+      ? null
+      : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+    selectedNotificationPayload = notificationAppLaunchDetails!.payload;
+    // When the app opens from the notification the payload is printed.
+    // We could potentially use this for determining when the app opens.
+    print("Payload: "+selectedNotificationPayload.toString());
   }
 
-  @override
-  void initState() {
-    //Create the listener for WiFi and server connection.
-    _connectionStream = _connectionStreamController.stream;
-    _connectionSink = _connectionStreamController.sink;
-    _connectionStream.listen((event) async {
-      print('Receive new result');
-      if (!event) {
-        setState(() {
-          ip = "";
-          serverMessage =
-              'Not connected to the server, please check the network connection.';
-          //speak();
-        });
-        print('Connection failed. Scan again');
-        Future.delayed(const Duration(milliseconds: 5000), () {
-          connectToWifi();
-        });
-      } else {
-        print('Connected');
-        Future.delayed(const Duration(milliseconds: 5000), () {
-          getConnection();
-        });
-      }
-    });
-    super.initState();
-    initTextToSpeech();
-    initiateSpeechToText();
-    getConnection();
-    getIP();
-  }
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
 
-  //Initialize the TTS.
-  Future<void> initTextToSpeech() async {
-    _tts = TextToSpeech();
-    // populate lang code (i.e. en-US)
-    languageCodes = await _tts.getLanguages();
-
-    // get default language
-    final String? defaultLangCode = await _tts.getDefaultLanguage();
-    if (defaultLangCode != null && languageCodes.contains(defaultLangCode)) {
-      languageCode = defaultLangCode;
-    } else {
-      languageCode = languages.first.code;
-    }
-
-    // get voice
-    voice = await getVoiceByLang(languageCode!);
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  Future<String?> getVoiceByLang(String lang) async {
-    List<String> voices = await _tts.getVoiceByLang(languageCode!);
-    if (voices.isNotEmpty) {
-      return voices.first;
-    }
-    return null;
-  }
-
-  //Star the TTS.
-  void speak() {
-    if (languageCode != null) {
-      _tts.setLanguage(languageCode!);
-    }
-    _tts.setVolume(1.0);
-    _tts.speak(serverMessage);
-  }
-
-  //Get the server's ip using udp broadcast
-  void getIP() async {
-    bool connected = await WiFiForIoTPlugin.isConnected();
-    if (!connected) {
-      return;
-    } else {
-      String? name = await WiFiForIoTPlugin.getSSID();
-      if (name == null || !name.contains("Sight++")) {
-        return;
-      }
-    }
-    try {
-      print('Try to get ip...');
-      var data = "Sight++";
-      var codec = const Utf8Codec();
-      var broadcastAddress = InternetAddress("255.255.255.255");
-      List<int> dataToSend = codec.encode(data);
-      //Bind socket to receive udp packets from any ip address.
-      RawDatagramSocket.bind(InternetAddress.anyIPv4, 9999)
-          .then((RawDatagramSocket socket) {
-        socket.broadcastEnabled = true;
-        socket.listen((event) async {
-          Datagram? dg = socket.receive();
-          if (dg != null) {
-            //If the server responses with 'approve', store the server's ip.
-            if (codec.decode(dg.data) == 'approve') {
-              setState(() {
-                ip = dg.address.host;
-                serverMessage = 'Connected to the Sight++ server.';
-                speak();
-                _connectionSink.add(true);
-              });
-            }
-          }
-        });
-        //Send broadcast message.
-        socket.send(dataToSend, broadcastAddress, 9999);
+  /// Note: permissions aren't requested here just to demonstrate that can be
+  /// done later
+  final IOSInitializationSettings initializationSettingsIOS =
+  IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+      onDidReceiveLocalNotification: (
+          int id,
+          String? title,
+          String? body,
+          String? payload,
+          ) async {
+        didReceiveLocalNotificationSubject.add(
+          ReceivedNotification(
+            id: id,
+            title: title,
+            body: body,
+            payload: payload,
+          ),
+        );
       });
-    } catch (exception) {
-      print(exception);
-    }
-  }
+  const MacOSInitializationSettings initializationSettingsMacOS =
+  MacOSInitializationSettings(
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
+  );
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
+    macOS: initializationSettingsMacOS,
+  );
 
-  //Scan the WiFi
-  void connectToWifi() async {
-    print('Start scanning...');
-    bool networkFound = false;
-    try {
-      //Replace the ssid and password to yours setting.
-      networkFound = await WiFiForIoTPlugin.connect("Sight++",
-          password: "liuzhaoxi", security: NetworkSecurity.WPA);
-      //If the network is public, use the following one.
-      //networkFound = await WiFiForIoTPlugin.connect("YOUR_SSID");
-      if (!networkFound) {
-        _connectionSink.add(false);
-      } else {
-        WiFiForIoTPlugin.forceWifiUsage(true);
-        getIP();
-      }
-    } catch (exception) {
-      print(exception);
-    }
-  }
-
-
-  void initiateSpeechToText() {
-    print('_MyAppState.activateSpeechRecognizer... ');
-    _speech = SpeechRecognition();
-    _speech.setAvailabilityHandler(onSpeechAvailability);
-    _speech.setRecognitionStartedHandler(onRecognitionStarted);
-    _speech.setRecognitionResultHandler(onRecognitionResult);
-    _speech.setRecognitionCompleteHandler(onRecognitionComplete);
-    _speech.setErrorHandler(errorHandler);
-    _speech.activate('en_US').then((res) {
-      setState(() => _speechRecognitionAvailable = res);
-    });
-  }
-
-  void onSpeechAvailability(bool result) =>
-      setState(() => _speechRecognitionAvailable = result);
-
-  void onCurrentLocale(String locale) {
-    print('_MyAppState.onCurrentLocale... $locale');
-    setState(
-        () => selectedLang = languages.firstWhere((l) => l.code == locale));
-  }
-
-  void onRecognitionStarted() {
-    setState(() => _isListening = true);
-  }
-
-  void onRecognitionResult(String text) {
-    print('_MyAppState.onRecognitionResult... $text');
-    setState(() => transcription = text);
-  }
-
-  void onRecognitionComplete(String text) {
-    print('_MyAppState.onRecognitionComplete... $text');
-    setState(() => _isListening = false);
-  }
-
-  void _selectLangHandler(Language lang) {
-    setState(() => selectedLang = lang);
-  }
-
-  void errorHandler() => initiateSpeechToText();
-
-  List<CheckedPopupMenuItem<Language>> get _buildLanguagesWidgets => languages
-      .map((l) => CheckedPopupMenuItem<Language>(
-            value: l,
-            checked: selectedLang == l,
-            child: Text(l.name),
-          ))
-      .toList();
-
-  //Start STT.
-  void start() => _speech.activate(selectedLang.code).then((_) {
-        return _speech.listen().then((result) {
-          print('_VoiceCommandState.start => result $result');
-          setState(() {
-            transcription = "";
-            _isListening = result;
-          });
-        });
-      });
-
-  //Stop STT.
-  void stop() => _speech.stop().then((_) async {
-        setState(() => _isListening = false);
-        if (transcription != "") {
-          var data = {'message': transcription};
-          var response =
-              await Dio().post("http://" + ip + ":9999/add", data: data);
-          setState(() {
-            serverMessage = response.data.toString();
-            speak();
-          });
+  // This just makes it so that the notification can appear in when the app is open.
+  // But we won't actually do this, this is just for demo purposes.
+  // Comment this function out to make notifications appear when the app is
+  // running not open, but running in the background
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String? payload) async {
+        if (payload != null) {
+          debugPrint('notification payload: $payload');
         }
+        selectedNotificationPayload = payload;
+        selectNotificationSubject.add(payload);
       });
+
+  runApp(
+      MultiProvider(providers: [
+        ChangeNotifierProvider(
+          create: (context) => NetworkState(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SpeechToTextState(),
+        ),
+        ChangeNotifierProvider(
+            create: (context) => BluetoothBeaconState()
+        )
+      ],
+          child: MaterialApp(
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: [
+              Locale('en', ''),
+              Locale('es', ''),
+              Locale('zh', '')
+            ],
+            routes: {
+              '/':(context) {
+                languageCode = Localizations.localeOf(context).languageCode;
+                return SightPlusPlusApp();
+              },
+            },
+          )
+      )
+  );
+}
+
+Future<void> _configureLocalTimeZone() async {
+  if (Platform.isLinux) {
+    return;
+  }
+  tz.initializeTimeZones();
+  final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneName!));
+}
+
+class SightPlusPlusApp extends StatefulWidget {
+  const SightPlusPlusApp({Key? key, this.notificationAppLaunchDetails}) : super(key: key);
+
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails;
+
+  bool get didNotificationLaunchApp =>
+      notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+
+  @override
+  State<StatefulWidget> createState() {
+    return SightPlusPlusAppState();
+  }
+}
+
+class SightPlusPlusAppState extends State<SightPlusPlusApp> {
+
+  @override
+  void initState(){
+    super.initState();
+    _requestPermissions();
+    _configureSelectNotificationSubject();
+    languageCode ??= Localizations.localeOf(context).languageCode;
+
+    Provider.of<NetworkState>(context, listen: false).initNetworkConnection(flutterLocalNotificationsPlugin);
+    Provider.of<BluetoothBeaconState>(context, listen: false).initBeaconScanner();
+    Provider.of<NetworkState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
+    Provider.of<BluetoothBeaconState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
+    Provider.of<SpeechToTextState>(context, listen: false).initiateSpeechToText(languageCode: languageCode!);
+  }
+
+
+  void _requestPermissions() {
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        MacOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationSubject.stream
+        .listen((ReceivedNotification receivedNotification) async {
+      print("Title: "+receivedNotification.title.toString());
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            CupertinoAlertDialog(
+              title: receivedNotification.title != null
+                  ? Text(receivedNotification.title!)
+                  : null,
+              content: receivedNotification.body != null
+                  ? Text(receivedNotification.body!)
+                  : null,
+              // actions: <Widget>[
+              //   CupertinoDialogAction(
+              //     isDefaultAction: true,
+              //     onPressed: () async {
+              //       Navigator.of(context, rootNavigator: true).pop();
+              //       await Navigator.push(
+              //         context,
+              //         MaterialPageRoute<void>(
+              //           builder: (BuildContext context) =>
+              //               SightPlusPlusApp(notificationAppLaunchDetails: widget.notificationAppLaunchDetails,),
+              //         ),
+              //       );
+              //     },
+              //     child: const Text('Ok'),
+              //   )
+              // ],
+            ),
+      );
+    });
+  }
+
+  void _configureSelectNotificationSubject() {
+    if(!selectNotificationSubject.hasListener){
+      selectNotificationSubject.stream.listen((String? payload) async {
+        //selectNotificationSubject.close();
+        Provider.of<NetworkState>(context, listen:false).connectToWifi(payload!);
+        Navigator.pushNamed(context, '/');
+      });
+    }
+
+  }
+
+
+  Future<void> _zonedScheduleNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'Location Found',
+        'Open To Connect (2 second delay)',
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 7)),
+        const NotificationDetails(
+            android: AndroidNotificationDetails('finder_001',
+                'Sight++ Finder', 'Alerts you if a Sight++ location is found')),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
+  // We need to use this function whenever we want to send a new notification.
+  // This erases the old notification are replaces it with a new one.
+  // This is what we want so we don't just spam the user with notifications.
+  Future<void> _cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: const Text("Sight++"),
-        actions: <Widget>[
-          PopupMenuButton<Language>(
-            icon: const Icon(Icons.control_point),
-            onSelected: _selectLangHandler,
-            itemBuilder: (BuildContext context) => _buildLanguagesWidgets,
-          ),
-        ],
-      ),
-      body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 15.0),
-                  child: Text(transcription),
-                  decoration: BoxDecoration(border: Border.all())),
-              Container(
-                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 15.0),
-                  child: Text(serverMessage),
-                  decoration: BoxDecoration(border: Border.all())),
-              //Detect user's gesture.
-              GestureDetector(
-                onTapDown: (details) =>
-                    _speechRecognitionAvailable && !_isListening && ip != ""
-                        ? start()
-                        : null,
-                onTapUp: (details) {
-                  stop();
-                },
-                child: Container(
+    return
+      Scaffold(
+        appBar: AppBar(
+            title: const Text("Sight++")
+        ),
+        body: Column(
+          children: [
+            AskButton(),
+            Text("The closest beacon id is ${Provider.of<BluetoothBeaconState>(context).closestBeacon}\n"),
+            Text("User asks: ${Provider.of<SpeechToTextState>(context).transcription}. The server responded with: ${Provider.of<BluetoothBeaconState>(context).userMessage}\n"),
+            Text("The current floor is ${Provider.of<BluetoothBeaconState>(context).lastFloor}. The server message is: ${Provider.of<BluetoothBeaconState>(context).autoMessage}\n")
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Provider.of<SpeechToTextState>(context, listen:false).stop();
+          },
+        ),
+      );
+
+  }
+
+}
+
+class AskButton extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider<bool>.value(
+      value: Provider.of<NetworkState>(context).connected,
+      builder: (BuildContext context, Widget? child) {
+        if(Provider.of<NetworkState>(context).connected){
+          return Provider<bool>.value(
+              value: Provider.of<SpeechToTextState>(context).canStart,
+              builder: (BuildContext context, Widget? child) {
+                if(Provider.of<SpeechToTextState>(context).canStart || Provider.of<SpeechToTextState>(context).isListening){
+                  return GestureDetector(
+                      onTapDown: (details) {
+                        Provider.of<BluetoothBeaconState>(context, listen: false).stopTTS();
+                        Provider.of<SpeechToTextState>(context, listen: false).start();
+                      },
+
+                      onTapUp: (details) {
+                        Provider.of<SpeechToTextState>(context, listen: false).stop();
+                        if(Provider.of<SpeechToTextState>(context, listen: false).transcription != ''){
+                          var data = {'question':Provider.of<SpeechToTextState>(context, listen: false).transcription};
+                          Provider.of<BluetoothBeaconState>(context, listen: false).updateInfo(data);
+                        }
+                      },
+
+                      child: Center(
+                          child:Container(
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).buttonColor,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Text(Provider.of<SpeechToTextState>(context).isListening ? 'Listening...':'Ask Question'),
+                          )
+                      )
+                  );
+                }
+                return Container(
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
                     color: Theme.of(context).buttonColor,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  child: const Text('My Button'),
-                ),
-              ),
-              // ElevatedButton(
-              //   onLongPress:  _speechRecognitionAvailable && !_isListening && ip != ""
-              //       ? () => start()
-              //       : null,
-              //   onPressed: _speechRecognitionAvailable && !_isListening && ip != ""
-              //       ? () => start()
-              //       : null,
-              //   child: Text(
-              //     _isListening
-              //         ? 'Listening...'
-              //         : 'Listen (${selectedLang.code})',
-              //     style: const TextStyle(color: Colors.white),
-              //   ),
-              // )
-            ],
-          ))),
-    ));
+                  child: const Text('STT Not Available'),
+                );
+              }
+          );
+        }
+        return const Text("Not Connected To The Server");
+      },
+    );
   }
+
 }
-
-class Language {
-  final String name;
-  final String code;
-
-  const Language(this.name, this.code);
-}
-
-var languages = [
-  const Language('English', 'en_US'),
-  const Language('Francais', 'fr_FR'),
-  const Language('Pусский', 'ru_RU'),
-  const Language('Italiano', 'it_IT'),
-  const Language('Español', 'es_ES'),
-];
