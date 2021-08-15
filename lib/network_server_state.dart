@@ -45,6 +45,20 @@ class NetworkState with ChangeNotifier{
     flutterLocalNotificationsPlugin.show(
         0, 'Location Found', 'Open To Connect', platformChannelSpecifics
         ,payload: payload);
+    Future.delayed(const Duration(milliseconds: 60000), (){
+      if(!connected){
+        flutterLocalNotificationsPlugin.cancel(0);
+        _connectionStreamController.add(false);
+      }
+    });
+
+  }
+
+  // We need to use this function whenever we want to send a new notification.
+  // This erases the old notification are replaces it with a new one.
+  // This is what we want so we don't just spam the user with notifications.
+  Future<void> _cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   StreamSubscription startStream() {
@@ -58,7 +72,7 @@ class NetworkState with ChangeNotifier{
       notifyListeners();
       Future.delayed(const Duration(milliseconds: 5000), () {
         getConnection();
-      }).then((value) => print("Finished"));
+      });
     });
   }
 
@@ -103,6 +117,7 @@ class NetworkState with ChangeNotifier{
       for(var network in wifi){
         if(network.ssid.toString().contains("Sight++")){
           print('found');
+          _cancelAllNotifications();
           _showNotification(network.ssid.toString());
           return;
         }

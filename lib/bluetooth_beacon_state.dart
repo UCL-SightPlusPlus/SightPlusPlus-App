@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
+import 'package:sight_plus_plus/retry_interceptor.dart';
 import 'package:sight_plus_plus/text_to_speech_state.dart';
 
 import 'network_server_state.dart';
@@ -19,11 +20,16 @@ class BluetoothBeaconState with ChangeNotifier{
   String userMessage = '';
   final StreamController<bool> _connectionStreamController = StreamController<bool>();
   bool isRunning = false;
+  late Dio dio;
 
 
   void initBeaconScanner() async {
     try {
-
+      BaseOptions options = BaseOptions(
+          connectTimeout: 10000,
+          receiveTimeout: 5000 );
+      dio = Dio(options);
+      dio.interceptors.add(RetryOnError());
       _regions = <Region>[];
       if(!_regions.contains(Region(identifier: 'jaalee'))){
         _regions.add(Region(identifier: 'jaalee'));
@@ -109,18 +115,22 @@ class BluetoothBeaconState with ChangeNotifier{
       }
       if(NetworkState.ip != '' && tempBeacon != _closestBeacon && _closestBeacon != -1){
         print("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor");
-        Dio().get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response){
-          _lastFloor = response.data['floor'];
-          autoMessage = response.data['sentence'];
-          tts.start(autoMessage);
-        });
+        _updateLocation();
       }
       notifyListeners();
     });
   }
 
+  void _updateLocation(){
+    dio.get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response){
+      _lastFloor = response.data['floor'];
+      autoMessage = response.data['sentence'];
+      tts.start(autoMessage);
+    });
+  }
+
   void updateInfo(data){
-    Dio().post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: data).then((response) {
+    dio.post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: data).then((response) {
       tts.start(response.data['sentence']);
       userMessage = response.data['sentence'];
       notifyListeners();

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -98,10 +99,6 @@ void main() async{
     macOS: initializationSettingsMacOS,
   );
 
-  // This just makes it so that the notification can appear in when the app is open.
-  // But we won't actually do this, this is just for demo purposes.
-  // Comment this function out to make notifications appear when the app is
-  // running not open, but running in the background
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String? payload) async {
         if (payload != null) {
@@ -132,13 +129,17 @@ void main() async{
             supportedLocales: [
               Locale('en', ''),
               Locale('es', ''),
-              Locale('zh', '')
+              Locale('zh', ''),
+              Locale('fr', '')
             ],
             routes: {
               '/':(context) {
                 languageCode = Localizations.localeOf(context).languageCode;
                 return SightPlusPlusApp();
               },
+              '/page2': (context){
+                return Page2();
+              }
             },
           )
       )
@@ -176,13 +177,14 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
     _requestPermissions();
     _configureSelectNotificationSubject();
     languageCode ??= Localizations.localeOf(context).languageCode;
-
-    Provider.of<NetworkState>(context, listen: false).initNetworkConnection(flutterLocalNotificationsPlugin);
-    Provider.of<BluetoothBeaconState>(context, listen: false).initBeaconScanner();
-    Provider.of<NetworkState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
-    Provider.of<BluetoothBeaconState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
-    Provider.of<SpeechToTextState>(context, listen: false).initiateSpeechToText(languageCode: languageCode!);
-  }
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      Provider.of<NetworkState>(context, listen: false).initNetworkConnection(flutterLocalNotificationsPlugin);
+      Provider.of<BluetoothBeaconState>(context, listen: false).initBeaconScanner();
+      Provider.of<NetworkState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
+      Provider.of<BluetoothBeaconState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
+      Provider.of<SpeechToTextState>(context, listen: false).initiateSpeechToText(languageCode: languageCode!);
+    });
+   }
 
 
   void _requestPermissions() {
@@ -243,11 +245,14 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
     if(!selectNotificationSubject.hasListener){
       selectNotificationSubject.stream.listen((String? payload) async {
         //selectNotificationSubject.close();
+        String? currentRoute = ModalRoute.of(context)!.settings.name;
         Provider.of<NetworkState>(context, listen:false).connectToWifi(payload!);
+        if(currentRoute == '/'){
+          return;
+        }
         Navigator.pushNamed(context, '/');
       });
     }
-
   }
 
 
@@ -263,13 +268,6 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime);
-  }
-
-  // We need to use this function whenever we want to send a new notification.
-  // This erases the old notification are replaces it with a new one.
-  // This is what we want so we don't just spam the user with notifications.
-  Future<void> _cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   @override
@@ -289,7 +287,7 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Provider.of<SpeechToTextState>(context, listen:false).stop();
+            Navigator.pushNamed(context, '/page2');
           },
         ),
       );
@@ -351,5 +349,16 @@ class AskButton extends StatelessWidget{
       },
     );
   }
+}
 
+class Page2 extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        body: Text("Hello"),
+      ),
+    );
+
+  }
 }
