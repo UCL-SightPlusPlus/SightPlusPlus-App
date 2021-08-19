@@ -34,19 +34,73 @@ class SearchingScreen extends StatelessWidget {
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
             Container(
-              child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              width: 400,
+              height: 80,
+              decoration: const BoxDecoration(
+                color:Color(0xff333333),
+                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
+                    child: Icon(Icons.check_circle,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xffff1e39),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.wifi_off,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xffff1e39),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              width:350,
+              height: 60,
+              color: Colors.white,
+              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              child: RaisedButton.icon(
+                label: Text("Question Asked"),
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  // Now is Navigate to the second screen using a named route.
+                  // Need to change to the function that to tell user the question they asked
+                  Navigator.pushNamed(context, '/second');
+                },
+              ),
             ),
             Container(
               width:250,
               height: 250,
-              decoration: const BoxDecoration(
-                color:Color(0xff0b7ae6),
-                borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              ),
+              //decoration: const BoxDecoration(
+              //  color:Color(0xf5747474),
+              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+             // ),
               child: IconButton(
                 // We could also use the is icon maybe. It's for searching.
                 // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon: const Icon(Icons.wifi,size:150,color: Colors.white,),
+                icon: const Icon(Icons.wifi,size:250,color: Colors.white,),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -54,8 +108,9 @@ class SearchingScreen extends StatelessWidget {
                 },
               ),
             ),
-              const Text('Searching for Sight++ Location', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:30.0)),
+            const Text('Searching for Sight++ Location', textAlign: TextAlign.center,
+                style: TextStyle(color:Colors.white,fontSize:30.0)),
+            const Image(image: AssetImage("images/intel_logo.png"),height: 60, width: 60,),
           ],
         ),
       ),
@@ -76,17 +131,71 @@ class PermissionScreen extends StatelessWidget {
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
             Container(
-              child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              width: 400,
+              height: 80,
+              decoration: const BoxDecoration(
+                color:Color(0xff333333),
+                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xffff1e39),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.cancel,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xffff1e39),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.wifi_off,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xffff1e39),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              width:350,
+              height: 60,
+              color: Colors.white,
+              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              child: RaisedButton.icon(
+                label: Text("Question Asked"),
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  // Now is Navigate to the second screen using a named route.
+                  // Need to change to the function that to tell user the question they asked
+                  Navigator.pushNamed(context, '/third');
+                },
+              ),
             ),
             Container(
               width:250,
               height: 250,
-              decoration: const BoxDecoration(
-                color:Color(0xff0b7ae6),
-                borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              ),
+              //decoration: const BoxDecoration(
+              //  color:Color(0xff0b7ae6),
+              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              //),
               child: IconButton(
-                icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
+                //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
+                icon: const Icon(Icons.priority_high_outlined,size:250,color: Colors.white,),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -97,6 +206,7 @@ class PermissionScreen extends StatelessWidget {
             // Add Margin to push word inwards
             const Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
                 style: TextStyle(color:Colors.white,fontSize:24.0)),
+            const Image(image: AssetImage("images/intel_logo.png"),height: 60, width: 60,),
           ],
         ),
       ),
@@ -116,18 +226,74 @@ class BluetoothScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
-            const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
+            Container(
+              width: 400,
+              height: 80,
+              decoration: const BoxDecoration(
+                color:Color(0xff333333),
+                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
+                    child: Icon(Icons.check_circle,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.wifi,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xffff1e39),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,),
+                  ),
+                ],
+              ),
+            ),
 
-            const Text('Searching For Bluetooth Beacon', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
+            //const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
+            //const Text('Searching For Bluetooth Beacon', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
+            Container(
+              width:350,
+              height: 60,
+              color: Colors.white,
+              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              child: RaisedButton.icon(
+                label: Text("Question Asked"),
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  // Now is Navigate to the second screen using a named route.
+                  // Need to change to the function that to tell user the question they asked
+                  Navigator.pushNamed(context, '/four');
+                },
+              ),
+            ),
             Container(
               width:250,
               height: 250,
-              decoration: const BoxDecoration(
-                color:Color(0xff0b7ae6),
-                borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              ),
+              //decoration: const BoxDecoration(
+              //  color:Color(0xff0b7ae6),
+              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              //),
               child: IconButton(
-                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                icon: const Icon(Icons.mic,size:250,color: Colors.white,),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -137,6 +303,7 @@ class BluetoothScreen extends StatelessWidget {
             ),
             const Text('Hold To Record',textAlign: TextAlign.center,
                 style: TextStyle(color:Colors.white,fontSize:24.0)),
+            const Image(image: AssetImage("images/intel_logo.png"),height: 60, width: 60,),
           ],
         ),
       ),
@@ -158,19 +325,73 @@ class ConnectedScreen extends StatelessWidget {
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
             Container(
-              child: const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              width: 400,
+              height: 80,
+              decoration: const BoxDecoration(
+                color:Color(0xff333333),
+                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
+                    child: Icon(Icons.check_circle,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.wifi,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.bluetooth,size: 50, color: Colors.white,),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              width:350,
+              height: 60,
+              color: Colors.white,
+              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              child: RaisedButton.icon(
+                label: Text("Question Asked"),
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  // Now is Navigate to the second screen using a named route.
+                  // Need to change to the function that to tell user the question they asked
+                  Navigator.pushNamed(context, '/five');
+                },
+              ),
             ),
             Container(
               width:250,
               height: 250,
-              decoration: const BoxDecoration(
-                color:Color(0xff0b7ae6),
-                borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              ),
+              //decoration: const BoxDecoration(
+              //  color:Color(0xff0b7ae6),
+              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              //),
               child: IconButton(
                 // We could also use the is icon maybe. It's for searching.
                 // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                icon: const Icon(Icons.mic,size:250,color: Colors.white,),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -180,6 +401,7 @@ class ConnectedScreen extends StatelessWidget {
             ),
             const Text('Hold To Record', textAlign: TextAlign.center,
                 style: TextStyle(color:Colors.white,fontSize:30.0)),
+            const Image(image: AssetImage("images/intel_logo.png"),height: 60, width: 60,),
           ],
         ),
       ),
@@ -201,19 +423,73 @@ class ListeningScreen extends StatelessWidget {
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
             Container(
-              child: const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              width: 400,
+              height: 80,
+              decoration: const BoxDecoration(
+                color:Color(0xff333333),
+                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
+                    child: Icon(Icons.check_circle,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.wifi,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.bluetooth,size: 50, color: Colors.white,),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              width:350,
+              height: 60,
+              color: Colors.white,
+              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              child: RaisedButton.icon(
+                label: Text("Question Asked"),
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  // Now is Navigate to the second screen using a named route.
+                  // Need to change to the function that to tell user the question they asked
+                  Navigator.pushNamed(context, '/six');
+                },
+              ),
             ),
             Container(
               width:250,
               height: 250,
-              decoration: const BoxDecoration(
-                color:Color(0xff0b7ae6),
-                borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              ),
+              //decoration: const BoxDecoration(
+              //  color:Color(0xff0b7ae6),
+              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              //),
               child: IconButton(
                 // We could also use the is icon maybe. It's for searching.
                 // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                icon: const Icon(Icons.mic,size:250,color: Colors.white,),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -223,6 +499,7 @@ class ListeningScreen extends StatelessWidget {
             ),
             const Text('Listening', textAlign: TextAlign.center,
                 style: TextStyle(color:Colors.white,fontSize:30.0)),
+            const Image(image: AssetImage("images/intel_logo.png"),height: 60, width: 60,),
           ],
         ),
       ),
@@ -238,25 +515,79 @@ class WorkingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
-      backgroundColor: const Color(0xff1e90ff),
+      backgroundColor: const Color(0xff978d17),
       body: Center(
         child: Column(
           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
           children:[
             Container(
-              child: const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              width: 400,
+              height: 80,
+              decoration: const BoxDecoration(
+                color:Color(0xff333333),
+                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
+                    child: Icon(Icons.check_circle,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.wifi,size: 50, color: Colors.white,),
+                  ),
+                  Container(
+                    width:80,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(Icons.bluetooth,size: 50, color: Colors.white,),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              width:350,
+              height: 60,
+              color: Colors.white,
+              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              child: RaisedButton.icon(
+                label: Text("Question Asked"),
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  // Now is Navigate to the second screen using a named route.
+                  // Need to change to the function that to tell user the question they asked
+                  Navigator.pushNamed(context, '/');
+                },
+              ),
             ),
             Container(
               width:250,
               height: 250,
-              decoration: const BoxDecoration(
-                color:Color(0xff0b7ae6),
-                borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              ),
+              //decoration: const BoxDecoration(
+              //  color:Color(0xff0b7ae6),
+              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+              //),
               child: IconButton(
                 // We could also use the is icon maybe. It's for searching.
                 // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon: const Icon(Icons.mic,size:150,color: Colors.white,),
+                icon: const Icon(Icons.mic,size:250,color: Colors.white,),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -264,8 +595,9 @@ class WorkingScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Working', textAlign: TextAlign.center,
+            const Text('Getting Response', textAlign: TextAlign.center,
                 style: TextStyle(color:Colors.white,fontSize:30.0)),
+            const Image(image: AssetImage("images/intel_logo.png"),height: 60, width: 60,),
           ],
         ),
       ),
