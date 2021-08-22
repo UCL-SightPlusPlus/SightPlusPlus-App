@@ -235,7 +235,7 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
         if(currentRoute == '/'){
           return;
         }
-        Navigator.pushNamed(context, '/');
+        Navigator.of(context).pushNamedAndRemoveUntil("/", (route) => false);
       });
     }
   }
