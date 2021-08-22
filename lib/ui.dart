@@ -155,11 +155,12 @@ class PermissionScreen extends StatelessWidget {
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
               width: 400,
               height: 120,
+              margin: const EdgeInsets.fromLTRB(10,10,10,70),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -199,40 +200,7 @@ class PermissionScreen extends StatelessWidget {
             ),
 
             Container(
-              width:350,
-              height: 60,
-              color: Colors.white,
-              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width:280,
-                    height: 50,
-                    decoration: const BoxDecoration(
-                      color:Colors.white,
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                          hintText: "Question Asked"
-                      ),
-                    ),
-                  ),
-                  Container(
-                      width:50,
-                      height: 50,
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
-                  ),
-                ],
-              ),
-            ),
-
-            Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 70),
               width: double.infinity,
               height: 350,
               //decoration: const BoxDecoration(
@@ -250,17 +218,25 @@ class PermissionScreen extends StatelessWidget {
               ),
             ),
             // Add Margin to push word inwards
-            const Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:24.0)),
-            Container(
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 100),
+              child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:24.0)),
+            ),
+
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,10,10),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: 50,
+                      width: 50,semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
-
+            )
           ],
         ),
       ),
