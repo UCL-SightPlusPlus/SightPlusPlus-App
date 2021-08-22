@@ -12,9 +12,11 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sight_plus_plus/bluetooth_beacon_state.dart';
 import 'package:sight_plus_plus/network_server_state.dart';
+import 'package:sight_plus_plus/permission_state.dart';
 import 'package:sight_plus_plus/speech_to_text_state.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -118,24 +120,28 @@ void main() async{
         ),
         ChangeNotifierProvider(
             create: (context) => BluetoothBeaconState()
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PermissionState()
         )
       ],
           child: MaterialApp(
-            localizationsDelegates: [
+            localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: [
+            supportedLocales: const [
               Locale('en', ''),
               Locale('es', ''),
               Locale('zh', ''),
-              Locale('fr', '')
+              Locale('fr', ''),
+              Locale('jp', ''),
             ],
             routes: {
               '/':(context) {
                 languageCode = Localizations.localeOf(context).languageCode;
-                return SightPlusPlusApp();
+                return const SightPlusPlusApp();
               },
               '/page2': (context){
                 return Page2();
@@ -175,15 +181,29 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
   void initState(){
     super.initState();
     _requestPermissions();
-    _configureSelectNotificationSubject();
-    languageCode ??= Localizations.localeOf(context).languageCode;
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
-      Provider.of<NetworkState>(context, listen: false).initNetworkConnection(flutterLocalNotificationsPlugin);
-      Provider.of<BluetoothBeaconState>(context, listen: false).initBeaconScanner();
-      Provider.of<NetworkState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
-      Provider.of<BluetoothBeaconState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
-      Provider.of<SpeechToTextState>(context, listen: false).initiateSpeechToText(languageCode: languageCode!);
+    Provider.of<PermissionState>(context, listen: false).checkPermissions().then((value) {
+      if(!value){
+        return;
+      }
+      _configureSelectNotificationSubject();
+      languageCode ??= Localizations.localeOf(context).languageCode;
+      SchedulerBinding.instance!.addPostFrameCallback((_) {
+        Provider.of<NetworkState>(context, listen: false).initNetworkConnection(flutterLocalNotificationsPlugin);
+        Provider.of<NetworkState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
+        Provider.of<BluetoothBeaconState>(context, listen: false).initBeaconScanner();
+        Provider.of<BluetoothBeaconState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
+        Provider.of<SpeechToTextState>(context, listen: false).initiateSpeechToText();
+      });
     });
+
+   }
+
+
+
+   @override
+   void dispose(){
+    super.dispose();
+    Provider.of<BluetoothBeaconState>(context, listen: false).stopScanning();
    }
 
 
@@ -206,41 +226,6 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
     );
   }
 
-  void _configureDidReceiveLocalNotificationSubject() {
-    didReceiveLocalNotificationSubject.stream
-        .listen((ReceivedNotification receivedNotification) async {
-      print("Title: "+receivedNotification.title.toString());
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            CupertinoAlertDialog(
-              title: receivedNotification.title != null
-                  ? Text(receivedNotification.title!)
-                  : null,
-              content: receivedNotification.body != null
-                  ? Text(receivedNotification.body!)
-                  : null,
-              // actions: <Widget>[
-              //   CupertinoDialogAction(
-              //     isDefaultAction: true,
-              //     onPressed: () async {
-              //       Navigator.of(context, rootNavigator: true).pop();
-              //       await Navigator.push(
-              //         context,
-              //         MaterialPageRoute<void>(
-              //           builder: (BuildContext context) =>
-              //               SightPlusPlusApp(notificationAppLaunchDetails: widget.notificationAppLaunchDetails,),
-              //         ),
-              //       );
-              //     },
-              //     child: const Text('Ok'),
-              //   )
-              // ],
-            ),
-      );
-    });
-  }
-
   void _configureSelectNotificationSubject() {
     if(!selectNotificationSubject.hasListener){
       selectNotificationSubject.stream.listen((String? payload) async {
@@ -255,51 +240,20 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
     }
   }
 
-
-  Future<void> _zonedScheduleNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'Location Found',
-        'Open To Connect (2 second delay)',
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 7)),
-        const NotificationDetails(
-            android: AndroidNotificationDetails('finder_001',
-                'Sight++ Finder', 'Alerts you if a Sight++ location is found')),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return
-      Scaffold(
-        appBar: AppBar(
-            title: const Text("Sight++")
-        ),
-        body: Column(
-          children: [
-            AskButton(),
-            Text("The closest beacon id is ${Provider.of<BluetoothBeaconState>(context).closestBeacon}\n"),
-            Text("User asks: ${Provider.of<SpeechToTextState>(context).transcription}. The server responded with: ${Provider.of<BluetoothBeaconState>(context).userMessage}\n"),
-            Text("The current floor is ${Provider.of<BluetoothBeaconState>(context).lastFloor}. The server message is: ${Provider.of<BluetoothBeaconState>(context).autoMessage}\n")
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/page2');
-          },
-        ),
-      );
-
+    if(Provider.of<NetworkState>(context).connected){
+      return initialPage();
+    }
+    return Page2();
   }
 
 }
 
-class AskButton extends StatelessWidget{
 
-  @override
-  Widget build(BuildContext context) {
+class initialPage extends StatelessWidget{
+
+  Widget _buildButton(BuildContext context) {
     return Provider<bool>.value(
       value: Provider.of<NetworkState>(context).connected,
       builder: (BuildContext context, Widget? child) {
@@ -309,18 +263,18 @@ class AskButton extends StatelessWidget{
               builder: (BuildContext context, Widget? child) {
                 if(Provider.of<SpeechToTextState>(context).canStart || Provider.of<SpeechToTextState>(context).isListening){
                   return GestureDetector(
-                      onTapDown: (details) {
+                      onTap: () {
                         Provider.of<BluetoothBeaconState>(context, listen: false).stopTTS();
-                        Provider.of<SpeechToTextState>(context, listen: false).start();
+                        Provider.of<SpeechToTextState>(context, listen: false).startListening();
                       },
-
-                      onTapUp: (details) {
-                        Provider.of<SpeechToTextState>(context, listen: false).stop();
-                        if(Provider.of<SpeechToTextState>(context, listen: false).transcription != ''){
-                          var data = {'question':Provider.of<SpeechToTextState>(context, listen: false).transcription};
-                          Provider.of<BluetoothBeaconState>(context, listen: false).updateInfo(data);
-                        }
-                      },
+                      //
+                      // onLongPressEnd: (details) {
+                      //   Provider.of<SpeechToTextState>(context, listen: false).stopListening();
+                      //   if(Provider.of<SpeechToTextState>(context, listen: false).transcription != ''){
+                      //     var data = {'question':Provider.of<SpeechToTextState>(context, listen: false).transcription};
+                      //     Provider.of<BluetoothBeaconState>(context, listen: false).updateInfo(data);
+                      //   }
+                      // },
 
                       child: Center(
                           child:Container(
@@ -349,14 +303,92 @@ class AskButton extends StatelessWidget{
       },
     );
   }
-}
 
-class Page2 extends StatelessWidget{
+
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return
+      Scaffold(
+        appBar: AppBar(
+            title: const Text("Sight++")
+        ),
+        body: Column(
+          children: [
+            GestureDetector(
+            onLongPressStart: (details) {
+                Provider.of<BluetoothBeaconState>(context, listen: false).stopTTS();
+                Provider.of<SpeechToTextState>(context, listen: false).startListening();
+            },
+
+          onLongPressEnd: (details) {
+            Provider.of<SpeechToTextState>(context, listen: false).stopListening();
+            if(Provider.of<SpeechToTextState>(context, listen: false).transcription != ''){
+              var data = {'question':Provider.of<SpeechToTextState>(context, listen: false).transcription};
+              Provider.of<BluetoothBeaconState>(context, listen: false).updateInfo(data);
+            }
+          },
+
+          child: Center(
+              child:Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).buttonColor,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Text(Provider.of<SpeechToTextState>(context).isListening ? 'Listening...':'Ask Question'),
+              )
+          )
+      ),
+            Text("The closest beacon id is ${Provider.of<BluetoothBeaconState>(context).closestBeacon}\n"),
+            Text("User asks: ${Provider.of<SpeechToTextState>(context).transcription}. The server responded with: ${Provider.of<BluetoothBeaconState>(context).userMessage}\n"),
+            Text("The current floor is ${Provider.of<BluetoothBeaconState>(context).lastFloor}. The server message is: ${Provider.of<BluetoothBeaconState>(context).autoMessage}\n"),
+          ],
+        ),
+      );
+  }
+
+}
+
+class Page2 extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    return Page2State();
+  }
+
+}
+class Page2State extends State<Page2>{
+  @override
+  void initState(){
+    super.initState();
+  }
+
+  Widget buildButton(){
+    if(Provider.of<PermissionState>(context).permissionGranted){
+      return FloatingActionButton(
+        onPressed: (){
+          Provider.of<PermissionState>(context, listen: false).checkPermissions();
+        },
+        backgroundColor: Colors.blue,
+      );
+    }
+    return FloatingActionButton(
+      onPressed: (){
+        Provider.of<PermissionState>(context, listen: false).checkPermissions();
+      },
+      backgroundColor: Colors.red,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       home: Scaffold(
+        appBar: AppBar(
+          title: Text("Permission: "+Provider.of<PermissionState>(context).permissionGranted.toString()),
+        ),
         body: Text("Hello"),
+        floatingActionButton: buildButton()
       ),
     );
 

@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:sight_plus_plus/network_server_state.dart';
 
 class RetryOnError extends Interceptor{
   @override
   Future onError(DioError err, ErrorInterceptorHandler handler) async{
+    print("Error: ");
     print(err);
     if(_shouldRetry(err)){
       try{
@@ -11,6 +13,8 @@ class RetryOnError extends Interceptor{
       }catch (e){
         print(e);
       }
+    }else{
+      NetworkState.ip = '';
     }
     return err;
   }

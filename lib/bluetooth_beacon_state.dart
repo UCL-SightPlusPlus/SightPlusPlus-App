@@ -21,13 +21,15 @@ class BluetoothBeaconState with ChangeNotifier{
   final StreamController<bool> _connectionStreamController = StreamController<bool>();
   bool isRunning = false;
   late Dio dio;
+  int lost = 0;
 
 
   void initBeaconScanner() async {
     try {
       BaseOptions options = BaseOptions(
           connectTimeout: 10000,
-          receiveTimeout: 5000 );
+          receiveTimeout: 10000,
+          sendTimeout: 10000);
       dio = Dio(options);
       dio.interceptors.add(RetryOnError());
       _regions = <Region>[];
@@ -47,7 +49,6 @@ class BluetoothBeaconState with ChangeNotifier{
 
   void checkIP(){
     if(NetworkState.ip == ''){
-      print("Stop bluetooth");
       _connectionStreamController.add(false);
     }else{
       _connectionStreamController.add(true);
@@ -81,6 +82,14 @@ class BluetoothBeaconState with ChangeNotifier{
     isRunning = true;
     _scanResultStream = flutterBeacon.ranging(_regions).listen((RangingResult result) {
       if (result.beacons.isEmpty) {
+        if(_closestBeacon != -1){
+          print("No result, $_closestBeacon lost!");
+          lost++;
+        }
+        if(lost > 9){
+          _closestBeacon = -1;
+          lost = 0;
+        }
         return;
       }
       int tempBeacon = _closestBeacon;
@@ -95,6 +104,19 @@ class BluetoothBeaconState with ChangeNotifier{
           }
         }
       }
+
+      if((tempAccuracy == -1.0 || tempAccuracy >= 1.0) && _closestBeacon != -1){
+        print("$_closestBeacon lost!");
+        lost++;
+        if(lost > 9){
+          _closestBeacon = -1;
+          lost = 0;
+        }
+      }else if(tempAccuracy != -1.0 && tempAccuracy <= 1.0){
+        print("Find $_closestBeacon again.");
+        lost = 0;
+      }
+
       for (var b in result.beacons) {
         print(b.minor.toString() + ", " + b.accuracy.toString());
         if (_closestBeacon == -1) {
@@ -113,6 +135,7 @@ class BluetoothBeaconState with ChangeNotifier{
           }
         }
       }
+
       if(NetworkState.ip != '' && tempBeacon != _closestBeacon && _closestBeacon != -1){
         print("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor");
         _updateLocation();
@@ -130,7 +153,7 @@ class BluetoothBeaconState with ChangeNotifier{
   }
 
   void updateInfo(data){
-    dio.post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: data).then((response) {
+    dio.post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data:data).then((response) {
       tts.start(response.data['sentence']);
       userMessage = response.data['sentence'];
       notifyListeners();

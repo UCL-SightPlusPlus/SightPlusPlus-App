@@ -1,83 +1,94 @@
-import 'package:flutter_speech/flutter_speech.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'package:translator/translator.dart';
 
 class SpeechToTextState with ChangeNotifier{
-  late SpeechRecognition _speech;
-  bool _speechRecognitionAvailable = false;
-  bool _isListening = false;
+  bool _hasSpeech = false;
+  double level = 0.0;
+  double minSoundLevel = 50000;
+  double maxSoundLevel = -50000;
   String _transcription = '';
-  String _languageCode = '';
+  String lastError = '';
+  String lastStatus = '';
+  String _currentLocaleId = '';
+  final SpeechToText speech = SpeechToText();
 
-  void initiateSpeechToText({String languageCode = 'en'}) {
-    print('_MyAppState.activateSpeechRecognizer... ');
-    _languageCode = languageCode;
-    _speech = SpeechRecognition();
-    _speech.setAvailabilityHandler(onSpeechAvailability);
-    _speech.setRecognitionStartedHandler(onRecognitionStarted);
-    _speech.setRecognitionResultHandler(onRecognitionResult);
-    _speech.setRecognitionCompleteHandler(onRecognitionComplete);
-    _speech.setErrorHandler(errorHandler);
-    _speech.activate(_languageCode).then((res) {
-      _speechRecognitionAvailable = res;
-    });
+
+  void initiateSpeechToText() async {
+    var hasSpeech = await speech.initialize(
+        onError: errorListener,
+        onStatus: statusListener,
+        debugLogging: true);
+    if (hasSpeech) {
+      var systemLocale = await speech.systemLocale();
+      _currentLocaleId = systemLocale?.localeId ?? '';
+      _hasSpeech = hasSpeech;
+      notifyListeners();
+    }
+
   }
 
-  void onSpeechAvailability(bool result){
-    _speechRecognitionAvailable = result;
+  void startListening() {
+    _transcription = '';
+    lastError = '';
+    speech.listen(
+        onResult: resultListener,
+        listenFor: Duration(seconds: 30),
+        pauseFor: Duration(seconds: 5),
+        partialResults: false,
+        localeId: _currentLocaleId,
+        onSoundLevelChange: soundLevelListener,
+        cancelOnError: true,
+        listenMode: ListenMode.confirmation);
+  }
+
+  void stopListening() {
+    speech.stop();
+    level = 0.0;
     notifyListeners();
   }
 
-  void onRecognitionStarted() {
-    _isListening = true;
+  void cancelListening() {
+    speech.cancel();
+    level = 0.0;
     notifyListeners();
   }
 
-  void onRecognitionResult(String text) async{
-    print('_MyAppState.onRecognitionResult... $text');
-
-    GoogleTranslator().translate(text, to: 'en').then((value){
-      _transcription = "$value";
-    });
-  }
-
-  void onRecognitionComplete(String text) {
-    print('_MyAppState.onRecognitionComplete... $text');
-    _isListening = false;
+  void resultListener(SpeechRecognitionResult result) {
+    GoogleTranslator().translate(result.recognizedWords, to: 'en').then((value) {
+      _transcription = value.text;
+      print("Transcription is: " + _transcription);
+    }
+    );
     notifyListeners();
   }
 
-  void errorHandler() => initiateSpeechToText(languageCode: _languageCode);
-
-  void start() {
-    _speech.activate(_languageCode).then((_) {
-        return _speech.listen().then((result) {
-          _transcription = "";
-          _isListening = result;
-        });
-    });
+  void soundLevelListener(double level) {
+    minSoundLevel = min(minSoundLevel, level);
+    maxSoundLevel = max(maxSoundLevel, level);
+    // _logEvent('sound level $level: $minSoundLevel - $maxSoundLevel ');
+    this.level = level;
   }
 
-  void stop(){
-    _speech.stop().then((_) async {
-      _isListening = false;
-    });
+  void errorListener(SpeechRecognitionError error) {
+    lastError = '${error.errorMsg} - ${error.permanent}';
   }
 
-  get speechRecognitionAvailable => _speechRecognitionAvailable;
+  void statusListener(String status) {
+    print("Status is: "+status);
+    lastStatus = status;
+    notifyListeners();
+  }
 
-  get isListening => _isListening;
+  get canStart => speech.isNotListening && speech.isAvailable;
 
   get transcription => _transcription;
 
-  get canStart => _speechRecognitionAvailable && !_isListening;
+  get isListening => speech.isListening;
 
-  get languageCode => _languageCode;
-}
-
-
-class Language {
-  final String name;
-  final String code;
-  const Language(this.name, this.code);
 }

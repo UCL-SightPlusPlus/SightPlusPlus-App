@@ -23,7 +23,7 @@ class NetworkState with ChangeNotifier{
   void initNetworkConnection(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin){
     if(_connectionSub == null){
       _connectionSub = startStream();
-      getConnection();
+      _connectionStreamController.add(false);
       this.flutterLocalNotificationsPlugin = flutterLocalNotificationsPlugin;
     }
   }
@@ -45,13 +45,12 @@ class NetworkState with ChangeNotifier{
     flutterLocalNotificationsPlugin.show(
         0, 'Location Found', 'Open To Connect', platformChannelSpecifics
         ,payload: payload);
-    Future.delayed(const Duration(milliseconds: 60000), (){
-      if(!connected){
-        flutterLocalNotificationsPlugin.cancel(0);
+    Future.delayed(const Duration(milliseconds: 60000), () async{
+      String? ssid = await WiFiForIoTPlugin.getSSID();
+      if(ssid == null || !ssid.contains("Sight++")){
         _connectionStreamController.add(false);
       }
     });
-
   }
 
   // We need to use this function whenever we want to send a new notification.
@@ -65,12 +64,12 @@ class NetworkState with ChangeNotifier{
     return _connectionStreamController.stream.listen((event) async {
       print('Receive new result');
       if (!event) {
+        ip = '';
         print('Connection failed. Scan again');
       } else {
         print('Connected');
       }
-      notifyListeners();
-      Future.delayed(const Duration(milliseconds: 5000), () {
+      Future.delayed(Duration(milliseconds: 3000), (){
         getConnection();
       });
     });
@@ -81,13 +80,21 @@ class NetworkState with ChangeNotifier{
     bool connected = await WiFiForIoTPlugin.isConnected();
     if (connected) {
       String? ssid = await WiFiForIoTPlugin.getSSID();
-      if (ssid != null && ssid.contains("Sight++") && ip != '') {
-        this.connected = true;
-        _connectionStreamController.add(true);
-      }else{
-        ip = "";
+      if (ssid != null && ssid.contains("Sight++")) {
+        getIP();
+        if(ip != ''){
+          this.connected = true;
+          notifyListeners();
+          _connectionStreamController.add(true);
+          return;
+        }else{
+          notifyListeners();
+          _connectionStreamController.add(false);
+          return;
+        }
       }
     }
+    notifyListeners();
     getSSID();
   }
 
@@ -96,11 +103,10 @@ class NetworkState with ChangeNotifier{
       bool networkFound = await WiFiForIoTPlugin.connect(ssid, password: 'liuzhaoxi', security: NetworkSecurity.WPA);
       if (!networkFound) {
         connected = false;
-        _connectionStreamController.add(false);
       } else {
         await WiFiForIoTPlugin.forceWifiUsage(true);
-        getIP();
       }
+      _connectionStreamController.add(false);
     }catch (exception){
       _connectionStreamController.add(false);
       print(exception);
@@ -109,9 +115,6 @@ class NetworkState with ChangeNotifier{
   }
 
   void getSSID() async {
-    if (connected) {
-      return;
-    }
     try {
       List<WifiNetwork> wifi = await WiFiForIoTPlugin.loadWifiList();
       for(var network in wifi){
@@ -152,14 +155,10 @@ class NetworkState with ChangeNotifier{
               if (codec.decode(dg.data) == 'approve') {
                 ip = dg.address.host;
                 print(ip);
-                _connectionStreamController.add(true);
               }
-            }else{
-              _connectionStreamController.add(false);
             }
           } catch (exception) {
             ip = "";
-            _connectionStreamController.add(false);
             print(exception);
           }
         });
@@ -167,7 +166,6 @@ class NetworkState with ChangeNotifier{
         socket.send(dataToSend, broadcastAddress, 9999);
       });
     } catch (exception) {
-      _connectionStreamController.add(false);
       print(exception);
     }
   }

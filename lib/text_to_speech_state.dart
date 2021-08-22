@@ -10,7 +10,6 @@ class TextToSpeechState{
 
 
   void initTextToSpeech({String languageCode = "en"}) async{
-    // get voice
     if(languageCode == 'zh'){
       languageCode = 'zh-cn';
     }
