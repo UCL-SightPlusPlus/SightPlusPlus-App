@@ -42,6 +42,7 @@ dependencies:
   flutter_native_timezone: ^2.0.0
   path_provider: ^2.0.2
   http: ^0.13.3
+  flutter_screenutil: ^5.0.0+2
 
 
 
