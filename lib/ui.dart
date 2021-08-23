@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   runApp(
@@ -150,6 +151,12 @@ class PermissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height,
+      maxWidth: MediaQuery.of(context).size.width
+    ),
+    designSize: const Size(750, 1334),
+    orientation: Orientation.portrait);
     return Scaffold(
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
@@ -158,9 +165,9 @@ class PermissionScreen extends StatelessWidget {
           mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
-              width: 400,
-              height: 120,
-              margin: const EdgeInsets.fromLTRB(10,10,10,70),
+              width: ScreenUtil().setWidth(1000),
+              height: ScreenUtil().setHeight(200),
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(20),ScreenUtil().setHeight(50),ScreenUtil().setWidth(20),ScreenUtil().setHeight(150)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -169,47 +176,47 @@ class PermissionScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:100,
-                    height: 100,
+                    width: ScreenUtil().setWidth(150),
+                    height: ScreenUtil().setHeight(150),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.cancel,size: 50, color: Colors.white,semanticLabel: 'Permission is Not Given',),
+                    child: Icon(Icons.cancel,size: ScreenUtil().setWidth(100), color: Colors.white,semanticLabel: 'Permission is Not Given',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width: ScreenUtil().setWidth(150),
+                    height: ScreenUtil().setHeight(150),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.wifi_off,size: 50, color: Colors.white,semanticLabel: 'Server is Not Connected',),
+                    child: Icon(Icons.wifi_off,size: ScreenUtil().setWidth(100), color: Colors.white,semanticLabel: 'Server is Not Connected',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width: ScreenUtil().setWidth(150),
+                    height: ScreenUtil().setHeight(150),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,semanticLabel: 'Bluetooth Beacon is Not Connected',),
+                    child: Icon(Icons.bluetooth_disabled,size: ScreenUtil().setWidth(100), color: Colors.white,semanticLabel: 'Bluetooth Beacon is Not Connected',),
                   ),
                 ],
               ),
             ),
 
             Container(
-              margin: const EdgeInsets.fromLTRB(10, 0, 10, 70),
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),0,ScreenUtil().setWidth(10),ScreenUtil().setHeight(150)),
               width: double.infinity,
-              height: 350,
+              height: ScreenUtil().setHeight(350),
               //decoration: const BoxDecoration(
               //  color:Color(0xff0b7ae6),
               //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
               //),
               child: IconButton(
                 //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
-                icon: const Icon(Icons.priority_high_outlined,size:350,color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
+                icon: Icon(Icons.priority_high_outlined,size:ScreenUtil().setWidth(350),color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -218,21 +225,21 @@ class PermissionScreen extends StatelessWidget {
               ),
             ),
             // Add Margin to push word inwards
-            const Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 100),
-              child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),0,ScreenUtil().setWidth(10),ScreenUtil().setHeight(100)),
+              child: const Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
                   style: TextStyle(color:Colors.white,fontSize:24.0)),
             ),
 
             Padding(
-              padding: EdgeInsets.fromLTRB(0,0,10,10),
+              padding: EdgeInsets.fromLTRB(0,0,ScreenUtil().setWidth(20),ScreenUtil().setHeight(20)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image(
                       image: AssetImage("images/intel_logo.png"),
-                      height: 50,
-                      width: 50,semanticLabel: 'Intel Logo',
+                      height: ScreenUtil().setHeight(80),
+                      width: ScreenUtil().setWidth(80),semanticLabel: 'Intel Logo',
                     ),
                   ]
               ),

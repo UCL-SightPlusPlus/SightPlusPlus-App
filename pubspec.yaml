@@ -41,6 +41,7 @@ dependencies:
   translator: ^0.1.7
   speech_to_text: ^5.0.0
   permission_handler: ^8.1.4+2
+  flutter_screenutil: ^5.0.0+2
 
   flutter_local_notifications: ^8.0.0
   rxdart: ^0.27.1
