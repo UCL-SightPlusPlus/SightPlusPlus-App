@@ -27,16 +27,23 @@ class SearchingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height,
+        maxWidth: MediaQuery.of(context).size.width
+    ),
+        designSize: const Size(412, 869),
+        orientation: Orientation.portrait);
     return Scaffold(
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
-              width: 400,
-              height: 120,
+              width: ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(120),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -45,48 +52,48 @@ class SearchingScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
                     //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
-                    child: Icon(Icons.check_circle,size: 50, color: Colors.white,semanticLabel: 'Permission is Given',),
+                    child: Icon(Icons.check_circle,size: ScreenUtil().setWidth(50), color: Colors.white,semanticLabel: 'Permission is Given',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.wifi_off,size: 50, color: Colors.white,semanticLabel: 'Server is Not Connected',),
+                    child: Icon(Icons.wifi_off,size: ScreenUtil().setWidth(50), color: Colors.white,semanticLabel: 'Server is Not Connected',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,semanticLabel: 'Bluetooth Beacon is Not Connected',),
+                    child: Icon(Icons.bluetooth_disabled,size: ScreenUtil().setWidth(50), color: Colors.white,semanticLabel: 'Bluetooth Beacon is Not Connected',),
                   ),
                 ],
               ),
             ),
 
             Container(
-              width:350,
-              height: 80,
+              width:ScreenUtil().setWidth(350),
+              height: ScreenUtil().setHeight(60),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:280,
-                    height: 50,
+                    width:ScreenUtil().setWidth(280),
+                    height: ScreenUtil().setHeight(50),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -98,8 +105,8 @@ class SearchingScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:50,
-                      height: 50,
+                      width:ScreenUtil().setWidth(50),
+                      height: ScreenUtil().setHeight(50),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -111,8 +118,9 @@ class SearchingScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
               width: double.infinity,
-              height: 350,
+              height: ScreenUtil().setHeight(350),
               //decoration: const BoxDecoration(
               //  color:Color(0xf5747474),
               //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
@@ -128,17 +136,25 @@ class SearchingScreen extends StatelessWidget {
                   },
                 ),
               ),
-            const Text('Searching for Sight++ Location', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
-                ]
-              ),
+            // Add Margin to push word inwards
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
+              child: Text('Searching for Sight++ Location', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize: ScreenUtil().setSp(24))),
             ),
-
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: ScreenUtil().setHeight(50),
+                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                    ),
+                  ]
+              ),
+            )
           ],
         ),
       ),
@@ -152,11 +168,11 @@ class PermissionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(BoxConstraints(
-      maxHeight: MediaQuery.of(context).size.height,
-      maxWidth: MediaQuery.of(context).size.width
+        maxHeight: MediaQuery.of(context).size.height,
+        maxWidth: MediaQuery.of(context).size.width
     ),
-    designSize: const Size(750, 1334),
-    orientation: Orientation.portrait);
+        designSize: const Size(412, 869),
+        orientation: Orientation.portrait);
     return Scaffold(
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
@@ -165,9 +181,9 @@ class PermissionScreen extends StatelessWidget {
           mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
-              width: ScreenUtil().setWidth(1000),
-              height: ScreenUtil().setHeight(200),
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(20),ScreenUtil().setHeight(50),ScreenUtil().setWidth(20),ScreenUtil().setHeight(150)),
+              width: ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(120),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -176,38 +192,72 @@ class PermissionScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: ScreenUtil().setWidth(150),
-                    height: ScreenUtil().setHeight(150),
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.cancel,size: ScreenUtil().setWidth(100), color: Colors.white,semanticLabel: 'Permission is Not Given',),
+                    child: Icon(Icons.cancel,size: 50, color: Colors.white,semanticLabel: 'Permission is Not Given',),
                   ),
                   Container(
-                    width: ScreenUtil().setWidth(150),
-                    height: ScreenUtil().setHeight(150),
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.wifi_off,size: ScreenUtil().setWidth(100), color: Colors.white,semanticLabel: 'Server is Not Connected',),
+                    child: Icon(Icons.wifi_off,size: 50, color: Colors.white,semanticLabel: 'Server is Not Connected',),
                   ),
                   Container(
-                    width: ScreenUtil().setWidth(150),
-                    height: ScreenUtil().setHeight(150),
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.bluetooth_disabled,size: ScreenUtil().setWidth(100), color: Colors.white,semanticLabel: 'Bluetooth Beacon is Not Connected',),
+                    child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,semanticLabel: 'Bluetooth Beacon is Not Connected',),
                   ),
                 ],
               ),
             ),
 
             Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),0,ScreenUtil().setWidth(10),ScreenUtil().setHeight(150)),
+              width:ScreenUtil().setWidth(350),
+              height: ScreenUtil().setHeight(60),
+              color: Colors.white,
+              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width:ScreenUtil().setWidth(280),
+                    height: ScreenUtil().setHeight(50),
+                    decoration: const BoxDecoration(
+                      color:Colors.white,
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: const TextField(
+                      decoration: InputDecoration(
+                          hintText: "Question Asked"
+                      ),
+                    ),
+                  ),
+                  Container(
+                      width:ScreenUtil().setWidth(50),
+                      height: ScreenUtil().setHeight(50),
+                      decoration: const BoxDecoration(
+                        color:Color(0xff0b7ae6),
+                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
               width: double.infinity,
               height: ScreenUtil().setHeight(350),
               //decoration: const BoxDecoration(
@@ -216,7 +266,7 @@ class PermissionScreen extends StatelessWidget {
               //),
               child: IconButton(
                 //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
-                icon: Icon(Icons.priority_high_outlined,size:ScreenUtil().setWidth(350),color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
+                icon: const Icon(Icons.priority_high_outlined,size:350,color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
                 // Within the `FirstScreen` widget
                 onPressed: () {
                   // Navigate to the second screen using a named route.
@@ -226,20 +276,19 @@ class PermissionScreen extends StatelessWidget {
             ),
             // Add Margin to push word inwards
             Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),0,ScreenUtil().setWidth(10),ScreenUtil().setHeight(100)),
-              child: const Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:24.0)),
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
+              child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
             ),
-
             Padding(
-              padding: EdgeInsets.fromLTRB(0,0,ScreenUtil().setWidth(20),ScreenUtil().setHeight(20)),
+            padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image(
                       image: AssetImage("images/intel_logo.png"),
-                      height: ScreenUtil().setHeight(80),
-                      width: ScreenUtil().setWidth(80),semanticLabel: 'Intel Logo',
+                      height: ScreenUtil().setHeight(50),
+                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
                     ),
                   ]
               ),
@@ -257,15 +306,22 @@ class BluetoothScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height,
+        maxWidth: MediaQuery.of(context).size.width
+    ),
+        designSize: const Size(412, 869),
+        orientation: Orientation.portrait);
     return Scaffold(
       backgroundColor: const Color(0xff232981),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
-              width: 400,
-              height: 120,
+              width: ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(120),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -274,8 +330,8 @@ class BluetoothScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -284,8 +340,8 @@ class BluetoothScreen extends StatelessWidget {
                     child: Icon(Icons.check_circle,size: 50, color: Colors.white,semanticLabel: 'Permission is Given',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -293,8 +349,8 @@ class BluetoothScreen extends StatelessWidget {
                     child: Icon(Icons.wifi,size: 50, color: Colors.white,semanticLabel: 'Server is Connected',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xffff1e39),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -308,16 +364,16 @@ class BluetoothScreen extends StatelessWidget {
             //const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
             //const Text('Searching For Bluetooth Beacon', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
             Container(
-              width:350,
-              height: 60,
+              width:ScreenUtil().setWidth(350),
+              height: ScreenUtil().setHeight(60),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:280,
-                    height: 50,
+                    width:ScreenUtil().setWidth(280),
+                    height: ScreenUtil().setHeight(50),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -329,8 +385,8 @@ class BluetoothScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:50,
-                      height: 50,
+                      width:ScreenUtil().setWidth(50),
+                      height: ScreenUtil().setHeight(50),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -342,8 +398,9 @@ class BluetoothScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
               width: double.infinity,
-              height: 350,
+              height: ScreenUtil().setHeight(350),
               //decoration: const BoxDecoration(
               //  color:Color(0xff0b7ae6),
               //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
@@ -357,16 +414,25 @@ class BluetoothScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Hold To Record',textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:24.0)),
-            Container(
+            // Add Margin to push word inwards
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
+              child: Text('Hold To Record', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: ScreenUtil().setHeight(50),
+                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
@@ -381,16 +447,23 @@ class ConnectedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height,
+        maxWidth: MediaQuery.of(context).size.width
+    ),
+        designSize: const Size(412, 869),
+        orientation: Orientation.portrait);
     return Scaffold(
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff1e90ff),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
-              width: 400,
-              height: 120,
+              width: ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(120),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -399,8 +472,8 @@ class ConnectedScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -409,8 +482,8 @@ class ConnectedScreen extends StatelessWidget {
                     child: Icon(Icons.check_circle,size: 50, color: Colors.white,semanticLabel: 'Permission is Given',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -418,8 +491,8 @@ class ConnectedScreen extends StatelessWidget {
                     child: Icon(Icons.wifi,size: 50, color: Colors.white,semanticLabel: 'Server is Connected',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -431,16 +504,16 @@ class ConnectedScreen extends StatelessWidget {
             ),
 
             Container(
-              width:350,
-              height: 60,
+              width:ScreenUtil().setWidth(350),
+              height: ScreenUtil().setHeight(60),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:280,
-                    height: 50,
+                    width:ScreenUtil().setWidth(280),
+                    height: ScreenUtil().setHeight(50),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -452,8 +525,8 @@ class ConnectedScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:50,
-                      height: 50,
+                      width:ScreenUtil().setWidth(50),
+                      height: ScreenUtil().setHeight(50),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -465,8 +538,9 @@ class ConnectedScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
               width: double.infinity,
-              height: 350,
+              height: ScreenUtil().setHeight(350),
               //decoration: const BoxDecoration(
               //  color:Color(0xff0b7ae6),
               //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
@@ -482,16 +556,25 @@ class ConnectedScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Hold To Record', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
+            // Add Margin to push word inwards
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
+              child: Text('Hold To Record', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: ScreenUtil().setHeight(50),
+                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
@@ -506,16 +589,23 @@ class ListeningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height,
+        maxWidth: MediaQuery.of(context).size.width
+    ),
+        designSize: const Size(412, 869),
+        orientation: Orientation.portrait);
     return Scaffold(
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xffb61316),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
-              width: 400,
-              height: 120,
+              width: ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(120),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -524,8 +614,8 @@ class ListeningScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -534,8 +624,8 @@ class ListeningScreen extends StatelessWidget {
                     child: Icon(Icons.check_circle,size: 50, color: Colors.white,semanticLabel: 'Permission is Given',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -543,8 +633,8 @@ class ListeningScreen extends StatelessWidget {
                     child: Icon(Icons.wifi,size: 50, color: Colors.white,semanticLabel: 'Server is Connected',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -556,16 +646,16 @@ class ListeningScreen extends StatelessWidget {
             ),
 
             Container(
-              width:350,
-              height: 60,
+              width:ScreenUtil().setWidth(350),
+              height: ScreenUtil().setHeight(60),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:280,
-                    height: 50,
+                    width:ScreenUtil().setWidth(280),
+                    height: ScreenUtil().setHeight(50),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -577,8 +667,8 @@ class ListeningScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:50,
-                      height: 50,
+                      width:ScreenUtil().setWidth(50),
+                      height: ScreenUtil().setHeight(50),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -590,8 +680,9 @@ class ListeningScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
               width: double.infinity,
-              height: 350,
+              height: ScreenUtil().setHeight(350),
               //decoration: const BoxDecoration(
               //  color:Color(0xff0b7ae6),
               //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
@@ -607,16 +698,25 @@ class ListeningScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Listening', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
+            // Add Margin to push word inwards
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
+              child: Text('Listening', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: ScreenUtil().setHeight(50),
+                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
@@ -631,16 +731,23 @@ class WorkingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height,
+        maxWidth: MediaQuery.of(context).size.width
+    ),
+        designSize: const Size(412, 869),
+        orientation: Orientation.portrait);
     return Scaffold(
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff978d17),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
-              width: 400,
-              height: 120,
+              width: ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(120),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -649,8 +756,8 @@ class WorkingScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -659,8 +766,8 @@ class WorkingScreen extends StatelessWidget {
                     child: Icon(Icons.check_circle,size: 50, color: Colors.white,semanticLabel: 'Permission is Given',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -668,8 +775,8 @@ class WorkingScreen extends StatelessWidget {
                     child: Icon(Icons.wifi,size: 50, color: Colors.white,semanticLabel: 'Server is Connected',),
                   ),
                   Container(
-                    width:100,
-                    height: 100,
+                    width:ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -681,16 +788,16 @@ class WorkingScreen extends StatelessWidget {
             ),
 
             Container(
-              width:350,
-              height: 60,
+              width:ScreenUtil().setWidth(350),
+              height: ScreenUtil().setHeight(60),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:280,
-                    height: 50,
+                    width:ScreenUtil().setWidth(280),
+                    height: ScreenUtil().setHeight(50),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -702,8 +809,8 @@ class WorkingScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:50,
-                      height: 50,
+                      width:ScreenUtil().setWidth(50),
+                      height: ScreenUtil().setHeight(50),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -715,8 +822,9 @@ class WorkingScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
               width: double.infinity,
-              height: 350,
+              height: ScreenUtil().setHeight(350),
               //decoration: const BoxDecoration(
               //  color:Color(0xff0b7ae6),
               //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
@@ -732,16 +840,25 @@ class WorkingScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Getting Response', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
+            // Add Margin to push word inwards
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
+              child: Text('Getting Response', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: ScreenUtil().setHeight(50),
+                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
