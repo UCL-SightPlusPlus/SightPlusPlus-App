@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 void main() {
   runApp(
     MaterialApp(
@@ -31,11 +32,12 @@ class SearchingScreen extends StatelessWidget {
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
               width: 400,
               height: 120,
+              margin: const EdgeInsets.fromLTRB(10,10,10,70),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -77,7 +79,7 @@ class SearchingScreen extends StatelessWidget {
 
             Container(
               width:350,
-              height: 80,
+              height: 60,
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
@@ -110,6 +112,7 @@ class SearchingScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 50),
               width: double.infinity,
               height: 350,
               //decoration: const BoxDecoration(
@@ -127,17 +130,25 @@ class SearchingScreen extends StatelessWidget {
                   },
                 ),
               ),
-            const Text('Searching for Sight++ Location', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
-                ]
-              ),
+            // Add Margin to push word inwards
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 70),
+              child: Text('Searching for Sight++ Location', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:24.0)),
             ),
-
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,10,10),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: 50,
+                      width: 50,semanticLabel: 'Intel Logo',
+                    ),
+                  ]
+              ),
+            )
           ],
         ),
       ),
@@ -155,11 +166,12 @@ class PermissionScreen extends StatelessWidget {
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
               width: 400,
               height: 120,
+              margin: const EdgeInsets.fromLTRB(10,10,10,70),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -233,6 +245,7 @@ class PermissionScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 50),
               width: double.infinity,
               height: 350,
               //decoration: const BoxDecoration(
@@ -250,17 +263,24 @@ class PermissionScreen extends StatelessWidget {
               ),
             ),
             // Add Margin to push word inwards
-            const Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:24.0)),
-            Container(
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 70),
+              child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:24.0)),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,10,10),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: 50,
+                      width: 50,semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
-
+            )
           ],
         ),
       ),
@@ -278,11 +298,12 @@ class BluetoothScreen extends StatelessWidget {
       backgroundColor: const Color(0xff232981),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
               width: 400,
               height: 120,
+              margin: const EdgeInsets.fromLTRB(10,10,10,70),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -359,6 +380,7 @@ class BluetoothScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 50),
               width: double.infinity,
               height: 350,
               //decoration: const BoxDecoration(
@@ -374,16 +396,25 @@ class BluetoothScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Hold To Record',textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:24.0)),
-            Container(
+            // Add Margin to push word inwards
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 70),
+              child: Text('Hold To Record', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:24.0)),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,10,10),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: 50,
+                      width: 50,semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
@@ -403,11 +434,12 @@ class ConnectedScreen extends StatelessWidget {
       backgroundColor: const Color(0xff1e90ff),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
               width: 400,
               height: 120,
+              margin: const EdgeInsets.fromLTRB(10, 10, 10, 70),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -482,6 +514,7 @@ class ConnectedScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 50),
               width: double.infinity,
               height: 350,
               //decoration: const BoxDecoration(
@@ -499,16 +532,25 @@ class ConnectedScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Hold To Record', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
+            // Add Margin to push word inwards
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 70),
+              child: Text('Hold To Record', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:24.0)),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,10,10),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: 50,
+                      width: 50,semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
@@ -528,11 +570,12 @@ class ListeningScreen extends StatelessWidget {
       backgroundColor: const Color(0xffb61316),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
               width: 400,
               height: 120,
+              margin: const EdgeInsets.fromLTRB(10, 10, 10, 70),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -607,6 +650,7 @@ class ListeningScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 50),
               width: double.infinity,
               height: 350,
               //decoration: const BoxDecoration(
@@ -624,16 +668,25 @@ class ListeningScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Listening', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
+            // Add Margin to push word inwards
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 70),
+              child: Text('Listening', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:24.0)),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,10,10),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: 50,
+                      width: 50,semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
@@ -653,11 +706,12 @@ class WorkingScreen extends StatelessWidget {
       backgroundColor: const Color(0xff978d17),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment:MainAxisAlignment.end,
           children:[
             Container(
               width: 400,
               height: 120,
+              margin: const EdgeInsets.fromLTRB(10, 10, 10, 70),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -732,6 +786,7 @@ class WorkingScreen extends StatelessWidget {
             ),
 
             Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 50),
               width: double.infinity,
               height: 350,
               //decoration: const BoxDecoration(
@@ -749,16 +804,25 @@ class WorkingScreen extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Getting Response', textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.white,fontSize:30.0)),
-            Container(
+            // Add Margin to push word inwards
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 70),
+              child: Text('Getting Response', textAlign: TextAlign.center,
+                  style: TextStyle(color:Colors.white,fontSize:24.0)),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,10,10),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Image(image: AssetImage("images/intel_logo.png"),height: 50, width: 50,semanticLabel: 'Intel Logo'),
+                    Image(
+                      image: AssetImage("images/intel_logo.png"),
+                      height: 50,
+                      width: 50,semanticLabel: 'Intel Logo',
+                    ),
                   ]
               ),
-            ),
+            )
 
           ],
         ),
