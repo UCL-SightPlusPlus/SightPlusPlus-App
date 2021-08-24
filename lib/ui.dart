@@ -117,30 +117,49 @@ class SearchingScreen extends StatelessWidget {
               ),
             ),
 
-            Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-              width: double.infinity,
-              height: ScreenUtil().setHeight(350),
-              //decoration: const BoxDecoration(
-              //  color:Color(0xf5747474),
-              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              //),
-              child: IconButton(
-                  // We could also use the is icon maybe. It's for searching.
-                  // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon:  Icon(Icons.wifi,size:350,color: Colors.white,semanticLabel: 'Searching for Sight++ Location, Please Move Closer to Rooms'),
-                  // Within the `FirstScreen` widget
-                onPressed: (){
-                    // Navigate to the second screen using a named route.
-                  Navigator.pushNamed(context, '/second');
-                  },
+            MergeSemantics(
+              child: Column(children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(0),
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(50)),
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(350),
+                  //decoration: const BoxDecoration(
+                  //  color:Color(0xf5747474),
+                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                  //),
+                  child: IconButton(
+                    // We could also use the is icon maybe. It's for searching.
+                    // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                    icon:  Icon(Icons.wifi,size:350,color: Colors.white,semanticLabel: 'Searching for Sight++ Location, Please Move Closer to Rooms'),
+
+                    // Within the `FirstScreen` widget
+                    onPressed: () {
+                      // Navigate to the second screen using a named route.
+                      Navigator.pushNamed(context, '/second');
+                    },
+                  ),
                 ),
-              ),
-            // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: Text('Searching for Sight++ Location', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize: ScreenUtil().setSp(24))),
+                // Add Margin to push word inwards
+                Semantics(
+                  excludeSemantics: true,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(10),
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(70)),
+                    child: Text('Searching for Sight++ Location',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: ScreenUtil().setSp(24))),
+                  ),
+                )
+              ]),
             ),
 
             Padding(
