@@ -142,16 +142,21 @@ class SearchingScreen extends StatelessWidget {
               child: Text('Searching for Sight++ Location', textAlign: TextAlign.center,
                   style: TextStyle(color:Colors.white,fontSize: ScreenUtil().setSp(24))),
             ),
+
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Image(
-                      image: AssetImage("images/intel_logo.png"),
-                      height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
-                    ),
+                    Semantics(
+                      excludeSemantics: true,
+                      child:
+                      Image(
+                        image: AssetImage("images/intel_logo.png"),
+                        height: ScreenUtil().setHeight(50),
+                        width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                      ),
+                    )
                   ]
               ),
             )
