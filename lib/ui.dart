@@ -85,8 +85,6 @@ class SearchingScreen extends StatelessWidget {
               ),
             ),
 
-
-
             MergeSemantics(
               child: Column(children: [
                 Container(
@@ -161,10 +159,10 @@ class PermissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height,
-        maxWidth: MediaQuery.of(context).size.width
-    ),
+    ScreenUtil.init(
+        BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height,
+            maxWidth: MediaQuery.of(context).size.width),
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
@@ -173,93 +171,134 @@ class PermissionScreen extends StatelessWidget {
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.end,
-          children:[
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
+              margin: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30),
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
-                color:Color(0xff333333),
-                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                color: Color(0xff333333),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:ScreenUtil().setWidth(100),
+                    width: ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
-                      color:Color(0xffff1e39),
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      color: Color(0xffff1e39),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.cancel,size: 50, color: Colors.white,semanticLabel: 'Permission is Not Given',),
+                    child: Icon(
+                      Icons.cancel,
+                      size: 50,
+                      color: Colors.white,
+                      semanticLabel: 'Permission is Not Given',
+                    ),
                   ),
                   Container(
-                    width:ScreenUtil().setWidth(100),
+                    width: ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
-                      color:Color(0xffff1e39),
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      color: Color(0xffff1e39),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.wifi_off,size: 50, color: Colors.white,semanticLabel: 'Server is Not Connected',),
+                    child: Icon(
+                      Icons.wifi_off,
+                      size: 50,
+                      color: Colors.white,
+                      semanticLabel: 'Server is Not Connected',
+                    ),
                   ),
                   Container(
-                    width:ScreenUtil().setWidth(100),
+                    width: ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
-                      color:Color(0xffff1e39),
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      color: Color(0xffff1e39),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,semanticLabel: 'Bluetooth Beacon is Not Connected',),
+                    child: Icon(
+                      Icons.bluetooth_disabled,
+                      size: 50,
+                      color: Colors.white,
+                      semanticLabel: 'Bluetooth Beacon is Not Connected',
+                    ),
                   ),
                 ],
               ),
             ),
-
             MergeSemantics(
-              child: Column(children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(100), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-                  width: double.infinity,
-                  height: ScreenUtil().setHeight(350),
-                  //decoration: const BoxDecoration(
-                  //  color:Color(0xff0b7ae6),
-                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-                  //),
-                  child: IconButton(
-                    //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
-                    icon: const Icon(Icons.priority_high_outlined,size:350,color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
-                    // Within the `FirstScreen` widget
-                    onPressed: () {
-                      // Navigate to the second screen using a named route.
-                      Navigator.pushNamed(context, '/third');
-                    },
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.fromLTRB(
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(100),
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(50)),
+                    width: double.infinity,
+                    height: ScreenUtil().setHeight(350),
+                    //decoration: const BoxDecoration(
+                    //  color:Color(0xff0b7ae6),
+                    //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                    //),
+                    child: IconButton(
+                      //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
+                      icon: const Icon(Icons.priority_high_outlined,
+                          size: 350,
+                          color: Colors.white,
+                          semanticLabel:
+                              'Necessary Permissions is Not Given, Please Give Permissions'),
+                      // Within the `FirstScreen` widget
+                      onPressed: () {
+                        // Navigate to the second screen using a named route.
+                        Navigator.pushNamed(context, '/third');
+                      },
+                    ),
                   ),
-                ),
-                // Add Margin to push word inwards
-                Semantics(
-                  excludeSemantics: true,
-                  child:Padding(
-                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
-                    child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
-                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                  // Add Margin to push word inwards
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          ScreenUtil().setWidth(10),
+                          ScreenUtil().setHeight(10),
+                          ScreenUtil().setWidth(10),
+                          ScreenUtil().setHeight(40)),
+                      child: Text('Necessary Permissions Not Given',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: ScreenUtil().setSp(32))),
+                    ),
                   ),
-                ),
-              ],),
+                ],
+              ),
             ),
-
             Padding(
-            padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(10)),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Image(
                       image: AssetImage("images/intel_logo.png"),
                       height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                      width: ScreenUtil().setWidth(50),
                     ),
-                  ]
+                  )
+                ],
               ),
             )
           ],
@@ -268,7 +307,6 @@ class PermissionScreen extends StatelessWidget {
     );
   }
 }
-
 
 class BluetoothScreen extends StatelessWidget {
   const BluetoothScreen({Key? key}) : super(key: key);
@@ -399,19 +437,25 @@ class BluetoothScreen extends StatelessWidget {
             ),
 
             Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(10)),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Image(
                       image: AssetImage("images/intel_logo.png"),
                       height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
+                      width: ScreenUtil().setWidth(50),
                     ),
-                  ]
+                  )
+                ],
               ),
             )
-
           ],
         ),
       ),
@@ -551,19 +595,22 @@ class ConnectedScreen extends StatelessWidget {
             // Add Margin to push word inwards
 
             Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image(
-                      image: AssetImage("images/intel_logo.png"),
-                      height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
-                    ),
-                  ]
-              ),
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(10)),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Semantics(
+                  excludeSemantics: true,
+                  child: Image(
+                    image: AssetImage("images/intel_logo.png"),
+                    height: ScreenUtil().setHeight(50),
+                    width: ScreenUtil().setWidth(50),
+                  ),
+                ),
+              ]),
             )
-
           ],
         ),
       ),
@@ -571,16 +618,15 @@ class ConnectedScreen extends StatelessWidget {
   }
 }
 
-
 class ListeningScreen extends StatelessWidget {
   const ListeningScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height,
-        maxWidth: MediaQuery.of(context).size.width
-    ),
+    ScreenUtil.init(
+        BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height,
+            maxWidth: MediaQuery.of(context).size.width),
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
@@ -589,53 +635,71 @@ class ListeningScreen extends StatelessWidget {
       backgroundColor: const Color(0xffb61316),
       body: Center(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.end,
-          children:[
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
+              margin: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30),
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
-                color:Color(0xff333333),
-                borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                color: Color(0xff333333),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:ScreenUtil().setWidth(100),
+                    width: ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
-                      color:Color(0xff0b7ae6),
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      color: Color(0xff0b7ae6),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
-                    child: Icon(Icons.check_circle,size: 50, color: Colors.white,semanticLabel: 'Permission is Given',),
+                    child: Icon(
+                      Icons.check_circle,
+                      size: 50,
+                      color: Colors.white,
+                      semanticLabel: 'Permission is Given',
+                    ),
                   ),
                   Container(
-                    width:ScreenUtil().setWidth(100),
+                    width: ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
-                      color:Color(0xff0b7ae6),
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      color: Color(0xff0b7ae6),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.wifi,size: 50, color: Colors.white,semanticLabel: 'Server is Connected',),
+                    child: Icon(
+                      Icons.wifi,
+                      size: 50,
+                      color: Colors.white,
+                      semanticLabel: 'Server is Connected',
+                    ),
                   ),
                   Container(
-                    width:ScreenUtil().setWidth(100),
+                    width: ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
                     decoration: const BoxDecoration(
-                      color:Color(0xff0b7ae6),
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      color: Color(0xff0b7ae6),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: Icon(Icons.bluetooth,size: 50, color: Colors.white,semanticLabel: 'Bluetooth Beacon is Connected',),
+                    child: Icon(
+                      Icons.bluetooth,
+                      size: 50,
+                      color: Colors.white,
+                      semanticLabel: 'Bluetooth Beacon is Connected',
+                    ),
                   ),
                 ],
               ),
             ),
-
             Container(
-              width:ScreenUtil().setWidth(400),
+              width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(100),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
@@ -643,85 +707,106 @@ class ListeningScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:ScreenUtil().setWidth(300),
+                    width: ScreenUtil().setWidth(300),
                     height: ScreenUtil().setHeight(80),
                     decoration: const BoxDecoration(
-                      color:Colors.white,
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: const TextField(
-                      style:  TextStyle(fontSize: 32.0),
-                      decoration: InputDecoration(
-                          hintText: "Question Asked"
-                      ),
+                      style: TextStyle(fontSize: 32.0),
+                      decoration: InputDecoration(hintText: "Question Asked"),
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(80),
+                      width: ScreenUtil().setWidth(80),
                       height: ScreenUtil().setHeight(80),
                       decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                        color: Color(0xff0b7ae6),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
-                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
-                  ),
+                      child: const Icon(
+                        Icons.search,
+                        color: Colors.white,
+                        semanticLabel: 'Question is Completed',
+                      )),
                 ],
               ),
             ),
             MergeSemantics(
-              child: Column(children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
-                  width: double.infinity,
-                  height: ScreenUtil().setHeight(350),
-                  //decoration: const BoxDecoration(
-                  //  color:Color(0xff0b7ae6),
-                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-                  //),
-                  child: IconButton(
-                    // We could also use the is icon maybe. It's for searching.
-                    // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                    icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Please Speak Your Question',),
-                    // Within the `FirstScreen` widget
-                    onPressed: () {
-                      // Navigate to the second screen using a named route.
-                      Navigator.pushNamed(context, '/six');
-                    },
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.fromLTRB(
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(0),
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(85)),
+                    width: double.infinity,
+                    height: ScreenUtil().setHeight(350),
+                    //decoration: const BoxDecoration(
+                    //  color:Color(0xff0b7ae6),
+                    //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                    //),
+                    child: IconButton(
+                      // We could also use the is icon maybe. It's for searching.
+                      // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                      icon: const Icon(
+                        Icons.mic,
+                        size: 350,
+                        color: Colors.white,
+                        semanticLabel: 'Please Speak Your Question',
+                      ),
+                      // Within the `FirstScreen` widget
+                      onPressed: () {
+                        // Navigate to the second screen using a named route.
+                        Navigator.pushNamed(context, '/six');
+                      },
+                    ),
                   ),
-                ),
-                // Add Margin to push word inwards
+                  // Add Margin to push word inwards
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          ScreenUtil().setWidth(10),
+                          ScreenUtil().setHeight(10),
+                          ScreenUtil().setWidth(10),
+                          ScreenUtil().setHeight(40)),
+                      child: Text('Listening',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: ScreenUtil().setSp(32))),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(10)),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 Semantics(
                   excludeSemantics: true,
-                  child:Padding(
-                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
-                    child: Text('Listening', textAlign: TextAlign.center,
-                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                  child: Image(
+                    image: AssetImage("images/intel_logo.png"),
+                    height: ScreenUtil().setHeight(50),
+                    width: ScreenUtil().setWidth(50),
+                    semanticLabel: 'Intel Logo',
                   ),
-                )
-              ],),
-            ),
-
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image(
-                      image: AssetImage("images/intel_logo.png"),
-                      height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
-                    ),
-                  ]
-              ),
+                ),
+              ]),
             )
-
           ],
         ),
       ),
     );
   }
 }
-
 
 class WorkingScreen extends StatelessWidget {
   const WorkingScreen({Key? key}) : super(key: key);
@@ -851,21 +936,24 @@ class WorkingScreen extends StatelessWidget {
                 )
               ],),
             ),
-
             Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image(
-                      image: AssetImage("images/intel_logo.png"),
-                      height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
-                    ),
-                  ]
-              ),
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(10)),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Semantics(
+                  excludeSemantics: true,
+                  child: Image(
+                    image: AssetImage("images/intel_logo.png"),
+                    height: ScreenUtil().setHeight(50),
+                    width: ScreenUtil().setWidth(50),
+                    semanticLabel: 'Intel Logo',
+                  ),
+                ),
+              ]),
             )
-
           ],
         ),
       ),
