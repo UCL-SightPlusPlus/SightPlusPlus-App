@@ -400,7 +400,7 @@ class BluetoothScreen extends StatelessWidget {
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
                       ),
-                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
+                      child: const Icon(Icons.arrow_forward_outlined, color: Colors.white,semanticLabel: 'Send Question'),
                   ),
                 ],
               ),
@@ -462,7 +462,6 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 }
-
 
 class ConnectedScreen extends StatelessWidget {
   const ConnectedScreen({Key? key}) : super(key: key);
@@ -555,7 +554,7 @@ class ConnectedScreen extends StatelessWidget {
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
                       ),
-                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
+                      child: const Icon(Icons.arrow_forward_outlined, color: Colors.white,semanticLabel: 'Send Question',)
                   ),
                 ],
               ),
@@ -726,9 +725,9 @@ class ListeningScreen extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: const Icon(
-                        Icons.search,
+                        Icons.arrow_forward_outlined,
                         color: Colors.white,
-                        semanticLabel: 'Question is Completed',
+                        semanticLabel: 'Send Question',
                       )),
                 ],
               ),
@@ -899,7 +898,7 @@ class WorkingScreen extends StatelessWidget {
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
                       ),
-                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
+                      child: const Icon(Icons.arrow_forward_outlined, color: Colors.white,semanticLabel: 'Send Question',)
                   ),
                 ],
               ),
