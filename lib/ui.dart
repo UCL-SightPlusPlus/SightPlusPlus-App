@@ -34,6 +34,8 @@ class SearchingScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      // To avoid screen overflow when using keyboard
+      resizeToAvoidBottomInset: false,
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
       body: Center(
@@ -43,7 +45,7 @@ class SearchingScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -83,46 +85,14 @@ class SearchingScreen extends StatelessWidget {
               ),
             ),
 
-            Container(
-              width:ScreenUtil().setWidth(350),
-              height: ScreenUtil().setHeight(60),
-              color: Colors.white,
-              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width:ScreenUtil().setWidth(280),
-                    height: ScreenUtil().setHeight(50),
-                    decoration: const BoxDecoration(
-                      color:Colors.white,
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                          hintText: "Question Asked"
-                      ),
-                    ),
-                  ),
-                  Container(
-                      width:ScreenUtil().setWidth(50),
-                      height: ScreenUtil().setHeight(50),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
-                  ),
-                ],
-              ),
-            ),
+
 
             MergeSemantics(
               child: Column(children: [
                 Container(
                   margin: EdgeInsets.fromLTRB(
                       ScreenUtil().setWidth(10),
-                      ScreenUtil().setHeight(0),
+                      ScreenUtil().setHeight(100),
                       ScreenUtil().setWidth(10),
                       ScreenUtil().setHeight(50)),
                   width: double.infinity,
@@ -151,12 +121,12 @@ class SearchingScreen extends StatelessWidget {
                         ScreenUtil().setWidth(10),
                         ScreenUtil().setHeight(10),
                         ScreenUtil().setWidth(10),
-                        ScreenUtil().setHeight(70)),
+                        ScreenUtil().setHeight(40)),
                     child: Text('Searching for Sight++ Location',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: ScreenUtil().setSp(24))),
+                            fontSize: ScreenUtil().setSp(32))),
                   ),
                 )
               ]),
@@ -198,6 +168,7 @@ class PermissionScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
       body: Center(
@@ -207,7 +178,7 @@ class PermissionScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -246,64 +217,38 @@ class PermissionScreen extends StatelessWidget {
               ),
             ),
 
-            Container(
-              width:ScreenUtil().setWidth(350),
-              height: ScreenUtil().setHeight(60),
-              color: Colors.white,
-              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width:ScreenUtil().setWidth(280),
-                    height: ScreenUtil().setHeight(50),
-                    decoration: const BoxDecoration(
-                      color:Colors.white,
-                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                          hintText: "Question Asked"
-                      ),
-                    ),
+            MergeSemantics(
+              child: Column(children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(100), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(350),
+                  //decoration: const BoxDecoration(
+                  //  color:Color(0xff0b7ae6),
+                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                  //),
+                  child: IconButton(
+                    //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
+                    icon: const Icon(Icons.priority_high_outlined,size:350,color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
+                    // Within the `FirstScreen` widget
+                    onPressed: () {
+                      // Navigate to the second screen using a named route.
+                      Navigator.pushNamed(context, '/third');
+                    },
                   ),
-                  Container(
-                      width:ScreenUtil().setWidth(50),
-                      height: ScreenUtil().setHeight(50),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      child: const Icon(Icons.search, color: Colors.white,semanticLabel: 'Question is Completed',)
+                ),
+                // Add Margin to push word inwards
+                Semantics(
+                  excludeSemantics: true,
+                  child:Padding(
+                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
+                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
                   ),
-                ],
-              ),
+                ),
+              ],),
             ),
 
-            Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-              width: double.infinity,
-              height: ScreenUtil().setHeight(350),
-              //decoration: const BoxDecoration(
-              //  color:Color(0xff0b7ae6),
-              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              //),
-              child: IconButton(
-                //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
-                icon: const Icon(Icons.priority_high_outlined,size:350,color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
-                // Within the `FirstScreen` widget
-                onPressed: () {
-                  // Navigate to the second screen using a named route.
-                  Navigator.pushNamed(context, '/third');
-                },
-              ),
-            ),
-            // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
-            ),
             Padding(
             padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
@@ -337,6 +282,7 @@ class BluetoothScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xff232981),
       body: Center(
         child: Column(
@@ -345,7 +291,7 @@ class BluetoothScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -388,29 +334,30 @@ class BluetoothScreen extends StatelessWidget {
             //const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
             //const Text('Searching For Bluetooth Beacon', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
             Container(
-              width:ScreenUtil().setWidth(350),
-              height: ScreenUtil().setHeight(60),
+              width:ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(100),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:ScreenUtil().setWidth(280),
-                    height: ScreenUtil().setHeight(50),
+                    width:ScreenUtil().setWidth(300),
+                    height: ScreenUtil().setHeight(80),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: const TextField(
-                      decoration: InputDecoration(
+                       style:  TextStyle(fontSize: 32.0),
+                       decoration: InputDecoration(
                           hintText: "Question Asked"
                       ),
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(50),
-                      height: ScreenUtil().setHeight(50),
+                      width:ScreenUtil().setWidth(80),
+                      height: ScreenUtil().setHeight(80),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -420,30 +367,37 @@ class BluetoothScreen extends StatelessWidget {
                 ],
               ),
             ),
+            MergeSemantics(
+              child: Column(children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(350),
+                  //decoration: const BoxDecoration(
+                  //  color:Color(0xff0b7ae6),
+                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                  //),
+                  child: IconButton(
+                    icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Please Hold To Record Your Question'),
+                    // Within the `FirstScreen` widget
+                    onPressed: () {
+                      // Navigate to the second screen using a named route.
+                      Navigator.pushNamed(context, '/four');
+                    },
+                  ),
+                ),
+                // Add Margin to push word inwards
+                Semantics(
+                  excludeSemantics: true,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    child: Text('Hold To Record', textAlign: TextAlign.center,
+                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                  ),
+                ),
+              ],),
+            ),
 
-            Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-              width: double.infinity,
-              height: ScreenUtil().setHeight(350),
-              //decoration: const BoxDecoration(
-              //  color:Color(0xff0b7ae6),
-              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              //),
-              child: IconButton(
-                icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Please Hold To Record Your Question'),
-                // Within the `FirstScreen` widget
-                onPressed: () {
-                  // Navigate to the second screen using a named route.
-                  Navigator.pushNamed(context, '/four');
-                },
-              ),
-            ),
-            // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: Text('Hold To Record', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
-            ),
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
@@ -478,6 +432,7 @@ class ConnectedScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff1e90ff),
       body: Center(
@@ -487,7 +442,7 @@ class ConnectedScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -528,29 +483,30 @@ class ConnectedScreen extends StatelessWidget {
             ),
 
             Container(
-              width:ScreenUtil().setWidth(350),
-              height: ScreenUtil().setHeight(60),
+              width:ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(100),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:ScreenUtil().setWidth(280),
-                    height: ScreenUtil().setHeight(50),
+                    width:ScreenUtil().setWidth(300),
+                    height: ScreenUtil().setHeight(80),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: const TextField(
+                      style:  TextStyle(fontSize: 32.0),
                       decoration: InputDecoration(
                           hintText: "Question Asked"
                       ),
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(50),
-                      height: ScreenUtil().setHeight(50),
+                      width:ScreenUtil().setWidth(80),
+                      height: ScreenUtil().setHeight(80),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -560,32 +516,40 @@ class ConnectedScreen extends StatelessWidget {
                 ],
               ),
             ),
+            MergeSemantics(
+              child: Column(children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(350),
+                  //decoration: const BoxDecoration(
+                  //  color:Color(0xff0b7ae6),
+                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                  //),
+                  child: IconButton(
+                    // We could also use the is icon maybe. It's for searching.
+                    // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                    icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Please Hold To Record Your Question'),
+                    // Within the `FirstScreen` widget
+                    onPressed: () {
+                      // Navigate to the second screen using a named route.
+                      Navigator.pushNamed(context, '/five');
+                    },
+                  ),
+                ),
+                Semantics(
+                  excludeSemantics: true,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    child: Text('Hold To Record', textAlign: TextAlign.center,
+                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                  ),
+                )
+              ],),
+            ),
 
-            Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-              width: double.infinity,
-              height: ScreenUtil().setHeight(350),
-              //decoration: const BoxDecoration(
-              //  color:Color(0xff0b7ae6),
-              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              //),
-              child: IconButton(
-                // We could also use the is icon maybe. It's for searching.
-                // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Please Hold To Record Your Question'),
-                // Within the `FirstScreen` widget
-                onPressed: () {
-                  // Navigate to the second screen using a named route.
-                  Navigator.pushNamed(context, '/five');
-                },
-              ),
-            ),
             // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: Text('Hold To Record', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
-            ),
+
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
@@ -620,6 +584,7 @@ class ListeningScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xffb61316),
       body: Center(
@@ -629,7 +594,7 @@ class ListeningScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -670,29 +635,30 @@ class ListeningScreen extends StatelessWidget {
             ),
 
             Container(
-              width:ScreenUtil().setWidth(350),
-              height: ScreenUtil().setHeight(60),
+              width:ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(100),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:ScreenUtil().setWidth(280),
-                    height: ScreenUtil().setHeight(50),
+                    width:ScreenUtil().setWidth(300),
+                    height: ScreenUtil().setHeight(80),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: const TextField(
+                      style:  TextStyle(fontSize: 32.0),
                       decoration: InputDecoration(
                           hintText: "Question Asked"
                       ),
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(50),
-                      height: ScreenUtil().setHeight(50),
+                      width:ScreenUtil().setWidth(80),
+                      height: ScreenUtil().setHeight(80),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -702,32 +668,39 @@ class ListeningScreen extends StatelessWidget {
                 ],
               ),
             ),
+            MergeSemantics(
+              child: Column(children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(350),
+                  //decoration: const BoxDecoration(
+                  //  color:Color(0xff0b7ae6),
+                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                  //),
+                  child: IconButton(
+                    // We could also use the is icon maybe. It's for searching.
+                    // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                    icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Please Speak Your Question',),
+                    // Within the `FirstScreen` widget
+                    onPressed: () {
+                      // Navigate to the second screen using a named route.
+                      Navigator.pushNamed(context, '/six');
+                    },
+                  ),
+                ),
+                // Add Margin to push word inwards
+                Semantics(
+                  excludeSemantics: true,
+                  child:Padding(
+                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    child: Text('Listening', textAlign: TextAlign.center,
+                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                  ),
+                )
+              ],),
+            ),
 
-            Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-              width: double.infinity,
-              height: ScreenUtil().setHeight(350),
-              //decoration: const BoxDecoration(
-              //  color:Color(0xff0b7ae6),
-              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              //),
-              child: IconButton(
-                // We could also use the is icon maybe. It's for searching.
-                // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Please Speak Your Question',),
-                // Within the `FirstScreen` widget
-                onPressed: () {
-                  // Navigate to the second screen using a named route.
-                  Navigator.pushNamed(context, '/six');
-                },
-              ),
-            ),
-            // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: Text('Listening', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
-            ),
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
@@ -762,6 +735,7 @@ class WorkingScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff978d17),
       body: Center(
@@ -771,7 +745,7 @@ class WorkingScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -812,29 +786,30 @@ class WorkingScreen extends StatelessWidget {
             ),
 
             Container(
-              width:ScreenUtil().setWidth(350),
-              height: ScreenUtil().setHeight(60),
+              width:ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(100),
               color: Colors.white,
               //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width:ScreenUtil().setWidth(280),
-                    height: ScreenUtil().setHeight(50),
+                    width:ScreenUtil().setWidth(300),
+                    height: ScreenUtil().setHeight(80),
                     decoration: const BoxDecoration(
                       color:Colors.white,
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: const TextField(
+                      style:  TextStyle(fontSize: 32.0),
                       decoration: InputDecoration(
                           hintText: "Question Asked"
                       ),
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(50),
-                      height: ScreenUtil().setHeight(50),
+                      width:ScreenUtil().setWidth(80),
+                      height: ScreenUtil().setHeight(80),
                       decoration: const BoxDecoration(
                         color:Color(0xff0b7ae6),
                         borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -844,32 +819,39 @@ class WorkingScreen extends StatelessWidget {
                 ],
               ),
             ),
+            MergeSemantics(
+              child: Column(children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
+                  width: double.infinity,
+                  height: ScreenUtil().setHeight(350),
+                  //decoration: const BoxDecoration(
+                  //  color:Color(0xff0b7ae6),
+                  //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
+                  //),
+                  child: IconButton(
+                    // We could also use the is icon maybe. It's for searching.
+                    // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
+                    icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Getting Response',),
+                    // Within the `FirstScreen` widget
+                    onPressed: () {
+                      // Navigate to the second screen using a named route.
+                      Navigator.pushNamed(context, '/');
+                    },
+                  ),
+                ),
+                // Add Margin to push word inwards
+                Semantics(
+                  excludeSemantics: true,
+                  child:Padding(
+                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    child: Text('Getting Response', textAlign: TextAlign.center,
+                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                  ),
+                )
+              ],),
+            ),
 
-            Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-              width: double.infinity,
-              height: ScreenUtil().setHeight(350),
-              //decoration: const BoxDecoration(
-              //  color:Color(0xff0b7ae6),
-              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              //),
-              child: IconButton(
-                // We could also use the is icon maybe. It's for searching.
-                // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
-                icon: const Icon(Icons.mic,size:350,color: Colors.white,semanticLabel: 'Getting Response',),
-                // Within the `FirstScreen` widget
-                onPressed: () {
-                  // Navigate to the second screen using a named route.
-                  Navigator.pushNamed(context, '/');
-                },
-              ),
-            ),
-            // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: Text('Getting Response', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
-            ),
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
