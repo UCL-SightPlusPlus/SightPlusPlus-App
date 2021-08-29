@@ -1,7 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:sight_plus_plus/bluetooth_beacon_state.dart';
 import 'package:sight_plus_plus/network_server_state.dart';
 
 class RetryOnError extends Interceptor{
+
+  RetryOnError(this.beaconState);
+  BluetoothBeaconState beaconState;
+
   @override
   Future onError(DioError err, ErrorInterceptorHandler handler) async{
     print("Error: ");
@@ -13,9 +18,11 @@ class RetryOnError extends Interceptor{
       }catch (e){
         print(e);
       }
-    }else{
+    }else if(err.response == null){
       NetworkState.ip = '';
     }
+    beaconState.setIsHandling = false;
+    beaconState.notifyFromError();
     return err;
   }
 
