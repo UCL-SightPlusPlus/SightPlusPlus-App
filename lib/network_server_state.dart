@@ -14,7 +14,7 @@ class NetworkState with ChangeNotifier{
       StreamController<bool>();
   StreamSubscription? _connectionSub;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  TextToSpeechState tts = TextToSpeechState();
+  bool notificationTouched = false;
 
   void setConnected(bool connection) {
     connected = connection;
@@ -28,11 +28,7 @@ class NetworkState with ChangeNotifier{
     }
   }
 
-  void initTextToSpeech({String languageCode = 'en'}){
-    tts.initTextToSpeech(languageCode:languageCode);
-  }
-
-  void _showNotification(String payload) async {
+   _showNotification(String payload) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     // I don't think we need to word about the first argument here. That's for communicating with FCM.
     AndroidNotificationDetails(
@@ -45,9 +41,9 @@ class NetworkState with ChangeNotifier{
     flutterLocalNotificationsPlugin.show(
         0, 'Location Found', 'Open To Connect', platformChannelSpecifics
         ,payload: payload);
-    Future.delayed(const Duration(milliseconds: 60000), () async{
+    Future.delayed(const Duration(milliseconds: 20000), () async{
       String? ssid = await WiFiForIoTPlugin.getSSID();
-      if(ssid == null || !ssid.contains("Sight++")){
+      if(!notificationTouched){
         _connectionStreamController.add(false);
       }
     });
@@ -75,19 +71,23 @@ class NetworkState with ChangeNotifier{
     });
   }
 
+  void stopStream(){
+    _connectionSub!.cancel();
+  }
+
   void getConnection() async {
     this.connected = false;
     bool connected = await WiFiForIoTPlugin.isConnected();
     if (connected) {
       String? ssid = await WiFiForIoTPlugin.getSSID();
       if (ssid != null && ssid.contains("Sight++")) {
-        getIP();
         if(ip != ''){
           this.connected = true;
           notifyListeners();
           _connectionStreamController.add(true);
           return;
         }else{
+          _getIP();
           notifyListeners();
           _connectionStreamController.add(false);
           return;
@@ -100,11 +100,10 @@ class NetworkState with ChangeNotifier{
 
   void connectToWifi(String ssid) async{
     try{
+      notificationTouched = true;
       bool networkFound = await WiFiForIoTPlugin.connect(ssid, password: 'liuzhaoxi', security: NetworkSecurity.WPA);
       if (!networkFound) {
         connected = false;
-      } else {
-        await WiFiForIoTPlugin.forceWifiUsage(true);
       }
       _connectionStreamController.add(false);
     }catch (exception){
@@ -116,6 +115,7 @@ class NetworkState with ChangeNotifier{
 
   void getSSID() async {
     try {
+      notificationTouched = false;
       List<WifiNetwork> wifi = await WiFiForIoTPlugin.loadWifiList();
       for(var network in wifi){
         if(network.ssid.toString().contains("Sight++")){
@@ -137,7 +137,8 @@ class NetworkState with ChangeNotifier{
   }
 
   //This function can get the local server's IP through UDP broadcast.
-  void getIP() async {
+  void _getIP() async {
+    await WiFiForIoTPlugin.forceWifiUsage(true);
     try {
       var data = "Sight++";
       var codec = const Utf8Codec();

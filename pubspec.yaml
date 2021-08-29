@@ -42,6 +42,8 @@ dependencies:
   speech_to_text: ^5.0.0
   permission_handler: ^8.1.4+2
   flutter_screenutil: ^5.0.0+2
+  mockito: ^5.0.15
+  http_mock_adapter: ^0.3.2
 
   flutter_local_notifications: ^8.0.0
   rxdart: ^0.27.1
@@ -49,7 +51,7 @@ dependencies:
   flutter_native_timezone: ^2.0.0
   path_provider: ^2.0.2
   http: ^0.13.3
-  flutter_screenutil: ^5.0.0+2
+
 
 
 

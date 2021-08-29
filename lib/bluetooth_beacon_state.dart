@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:sight_plus_plus/retry_interceptor.dart';
 import 'package:sight_plus_plus/text_to_speech_state.dart';
+import 'package:translator/translator.dart';
 
 import 'network_server_state.dart';
 
@@ -18,10 +19,11 @@ class BluetoothBeaconState with ChangeNotifier{
   TextToSpeechState tts = TextToSpeechState();
   String autoMessage = '';
   String userMessage = '';
-  final StreamController<bool> _connectionStreamController = StreamController<bool>();
+  StreamController<bool> _connectionStreamController = StreamController<bool>();
   bool isRunning = false;
-  late Dio dio;
+  late Dio _dio;
   int lost = 0;
+  bool _isHandling = false;
 
 
   void initBeaconScanner() async {
@@ -30,8 +32,8 @@ class BluetoothBeaconState with ChangeNotifier{
           connectTimeout: 10000,
           receiveTimeout: 10000,
           sendTimeout: 10000);
-      dio = Dio(options);
-      dio.interceptors.add(RetryOnError());
+      _dio = Dio(options);
+      _dio.interceptors.add(RetryOnError(this));
       _regions = <Region>[];
       if(!_regions.contains(Region(identifier: 'jaalee'))){
         _regions.add(Region(identifier: 'jaalee'));
@@ -43,7 +45,7 @@ class BluetoothBeaconState with ChangeNotifier{
     }
   }
 
-  void initTextToSpeech({String languageCode = 'en'}){
+  void initTextToSpeech({String languageCode = 'en-US'}){
     tts.initTextToSpeech(languageCode:languageCode);
   }
 
@@ -138,26 +140,50 @@ class BluetoothBeaconState with ChangeNotifier{
 
       if(NetworkState.ip != '' && tempBeacon != _closestBeacon && _closestBeacon != -1){
         print("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor");
-        _updateLocation();
+        updateLocation();
       }
       notifyListeners();
     });
   }
 
-  void _updateLocation(){
-    dio.get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response){
-      _lastFloor = response.data['floor'];
-      autoMessage = response.data['sentence'];
-      tts.start(autoMessage);
-    });
+  void updateLocation(){
+      _dio.get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response){
+        if(response.statusCode == 200){
+          _lastFloor = response.data['floor'];
+          autoMessage = response.data['sentence'];
+          tts.start(autoMessage);
+        }else{
+          tts.start("Server error");
+        }
+      });
   }
 
-  void updateInfo(data){
-    dio.post("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data:data).then((response) {
-      tts.start(response.data['sentence']);
-      userMessage = response.data['sentence'];
-      notifyListeners();
-    });
+  void updateInfo(String data) async{
+      _isHandling = true;
+      print("http://${NetworkState.ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor");
+      await GoogleTranslator().translate(data, to: 'en').then((value) {
+        data = value.text;
+        var msg = {'question': data};
+        return msg;
+      }
+      ).then((msg){
+        _dio.post("http://${NetworkState
+            .ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: msg)
+            .then((response) {
+          if (response.statusCode == 200) {
+            tts.start(response.data['sentence']);
+            userMessage = response.data['sentence'];
+          } else {
+            tts.start('Server error');
+          }
+          _isHandling = false;
+          notifyListeners();
+        });
+      });
+  }
+
+  void notifyFromError(){
+    notifyListeners();
   }
 
   void stopScanning() {
@@ -171,5 +197,28 @@ class BluetoothBeaconState with ChangeNotifier{
 
   get closestBeacon => _closestBeacon;
 
+  set setClosestBeacon(int closestBeacon) {
+    _closestBeacon = closestBeacon;
+  }
+
+  StreamController<bool> get connectionStreamController =>
+      _connectionStreamController;
+
+  set setConnectionStreamController(StreamController<bool> value) {
+    _connectionStreamController = value;
+  }
+
   get lastFloor => _lastFloor;
+
+  Dio get dio => _dio;
+
+  get isHandling => _isHandling;
+
+  set setIsHandling(bool isHandling){
+    _isHandling = isHandling;
+  }
+
+  set setDio(Dio value) {
+    _dio = value;
+  }
 }

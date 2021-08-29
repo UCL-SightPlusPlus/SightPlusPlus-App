@@ -1,14 +1,11 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:translator/translator.dart';
 
 class SpeechToTextState with ChangeNotifier{
-  bool _hasSpeech = false;
   double level = 0.0;
   double minSoundLevel = 50000;
   double maxSoundLevel = -50000;
@@ -27,15 +24,14 @@ class SpeechToTextState with ChangeNotifier{
     if (hasSpeech) {
       var systemLocale = await speech.systemLocale();
       _currentLocaleId = systemLocale?.localeId ?? '';
-      _hasSpeech = hasSpeech;
       notifyListeners();
     }
-
   }
 
   void startListening() {
     _transcription = '';
     lastError = '';
+    speech.isAvailable;
     speech.listen(
         onResult: resultListener,
         listenFor: Duration(seconds: 30),
@@ -60,11 +56,7 @@ class SpeechToTextState with ChangeNotifier{
   }
 
   void resultListener(SpeechRecognitionResult result) {
-    GoogleTranslator().translate(result.recognizedWords, to: 'en').then((value) {
-      _transcription = value.text;
-      print("Transcription is: " + _transcription);
-    }
-    );
+    _transcription = result.recognizedWords;
     notifyListeners();
   }
 

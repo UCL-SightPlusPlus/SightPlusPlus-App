@@ -9,21 +9,34 @@ class TextToSpeechState{
   String? voice;
 
 
-  void initTextToSpeech({String languageCode = "en"}) async{
-    if(languageCode == 'zh'){
+  void initTextToSpeech({String languageCode = "en-US"}) async{
+    if(languageCode.contains('zh')){
       languageCode = 'zh-cn';
     }
+    if(languageCode.contains('en')){
+      languageCode = 'en-US';
+    }
     _languageCode = languageCode;
+
     voice = await getVoiceByLang(_languageCode);
   }
 
   void start(String message) {
     String after = '';
     _tts.setVolume(1.0);
-    GoogleTranslator().translate(message, to:'zh-cn').then((value){
-      after = '$value';
-      _tts.speak(after);
-    });
+    _tts.setLanguage(_languageCode);
+    if(_languageCode.contains('en')){
+      GoogleTranslator().translate(message, to:'en').then((value){
+        after = '$value';
+        _tts.speak(after);
+      });
+    }else{
+      GoogleTranslator().translate(message, to:_languageCode).then((value){
+        after = '$value';
+        _tts.speak(after);
+      });
+    }
+
   }
 
   void stop(){
