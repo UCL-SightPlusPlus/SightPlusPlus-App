@@ -410,30 +410,30 @@ class BluetoothScreen extends StatelessWidget {
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: const TextField(
-                       style:  TextStyle(fontSize: 32.0),
-                       decoration: InputDecoration(
+                      style:  TextStyle(fontSize: 32.0),
+                      decoration: InputDecoration(
                           hintText: "Question Asked"
                       ),
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                            Icons.arrow_forward_outlined,
-                            color: Colors.white,
-                            semanticLabel: 'Send Question'),
-                        onPressed: (){
-                          // Need to change to the real function
-                          // Navigate to the second screen using a named route.
-                          Navigator.pushNamed(context, '/four');
-                        },
-                      ),
+                    width:ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                          Icons.arrow_forward_outlined,
+                          color: Colors.white,
+                          semanticLabel: 'Send Question'),
+                      onPressed: (){
+                        // Need to change to the real function
+                        // Navigate to the second screen using a named route.
+                        Navigator.pushNamed(context, '/four');
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -603,12 +603,12 @@ class ConnectedScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
+                    width:ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
                     child: IconButton(
                       icon: const Icon(
                           Icons.arrow_forward_outlined,
@@ -787,12 +787,12 @@ class ListeningScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width: ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color: Color(0xff0b7ae6),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
+                    width: ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color: Color(0xff0b7ae6),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
                     child: IconButton(
                       icon: const Icon(
                           Icons.arrow_forward_outlined,
@@ -976,12 +976,12 @@ class WorkingScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
+                    width:ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
                     child: IconButton(
                       icon: const Icon(
                           Icons.arrow_forward_outlined,
