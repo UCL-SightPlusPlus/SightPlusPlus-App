@@ -5,8 +5,7 @@ void main() {
   runApp(
     MaterialApp(
       title: 'Named Routes Demo',
-      // Start the app with the "/" named route. In this case, the app starts
-      // on the FirstScreen widget.
+      // Start the app with the "/" named route. In this case, the app starts on the FirstScreen widget.
       initialRoute: '/',
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
@@ -36,16 +35,20 @@ class SearchingScreen extends StatelessWidget {
     return Scaffold(
       // To avoid screen overflow when using keyboard
       resizeToAvoidBottomInset: false,
-      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
           mainAxisAlignment:MainAxisAlignment.end,
           children:[
+            // Status Bar
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
+              margin:  EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30),
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -95,7 +98,6 @@ class SearchingScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             MergeSemantics(
               child: Column(children: [
                 Container(
@@ -107,8 +109,6 @@ class SearchingScreen extends StatelessWidget {
                   width: double.infinity,
                   height: ScreenUtil().setHeight(350),
                   child: IconButton(
-                    // We could also use the is icon maybe. It's for searching.
-                    // icon: const Icon(Icons.location_searching_outlined, size: 150, color:Colors.white),
                     icon:  const Icon(
                         Icons.wifi,
                         size:350,
@@ -141,7 +141,11 @@ class SearchingScreen extends StatelessWidget {
               ]),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(10)),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -176,13 +180,14 @@ class PermissionScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      // To avoid screen overflow when using keyboard
       resizeToAvoidBottomInset: false,
-      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            // Status Bar
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
@@ -260,7 +265,6 @@ class PermissionScreen extends StatelessWidget {
                           size: 350,
                           color: Colors.white,
                           semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
-                      // Within the `FirstScreen` widget
                       onPressed: () {
                         // Need to change to the real function
                         // Navigate to the second screen using a named route.
@@ -326,6 +330,7 @@ class BluetoothScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      // To avoid screen overflow when using keyboard
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xff232981),
       body: Center(
@@ -335,7 +340,11 @@ class BluetoothScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
+              margin:  EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30),
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -343,6 +352,7 @@ class BluetoothScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  // Status Bar
                   Container(
                     width:ScreenUtil().setWidth(100),
                     height: ScreenUtil().setHeight(100),
@@ -385,12 +395,10 @@ class BluetoothScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             Container(
               width:ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(100),
               color: Colors.white,
-              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -402,30 +410,30 @@ class BluetoothScreen extends StatelessWidget {
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: const TextField(
-                       style:  TextStyle(fontSize: 32.0),
-                       decoration: InputDecoration(
+                      style:  TextStyle(fontSize: 32.0),
+                      decoration: InputDecoration(
                           hintText: "Question Asked"
                       ),
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                            Icons.arrow_forward_outlined,
-                            color: Colors.white,
-                            semanticLabel: 'Send Question'),
-                        onPressed: (){
-                          // Need to change to the real function
-                          // Navigate to the second screen using a named route.
-                          Navigator.pushNamed(context, '/four');
-                        },
-                      ),
+                    width:ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                          Icons.arrow_forward_outlined,
+                          color: Colors.white,
+                          semanticLabel: 'Send Question'),
+                      onPressed: (){
+                        // Need to change to the real function
+                        // Navigate to the second screen using a named route.
+                        Navigator.pushNamed(context, '/four');
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -433,7 +441,11 @@ class BluetoothScreen extends StatelessWidget {
             MergeSemantics(
               child: Column(children: [
                 Container(
-                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
+                  margin: EdgeInsets.fromLTRB(
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(0),
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(85)),
                   width: double.infinity,
                   height: ScreenUtil().setHeight(350),
                   child: IconButton(
@@ -442,7 +454,6 @@ class BluetoothScreen extends StatelessWidget {
                         size:350,
                         color: Colors.white,
                         semanticLabel: 'Please Hold To Record Your Question'),
-                    // Within the `FirstScreen` widget
                     onPressed: () {
                       // Need to change to the real function
                       // Navigate to the second screen using a named route.
@@ -454,14 +465,18 @@ class BluetoothScreen extends StatelessWidget {
                 Semantics(
                   excludeSemantics: true,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    padding: EdgeInsets.fromLTRB(
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(10),
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(40)),
                     child: Text('Hold To Record', textAlign: TextAlign.center,
-                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                        style: TextStyle(color:Colors.white,
+                            fontSize:ScreenUtil().setSp(32))),
                   ),
                 ),
               ],),
             ),
-
             Padding(
               padding: EdgeInsets.fromLTRB(
                   ScreenUtil().setWidth(0),
@@ -501,17 +516,22 @@ class ConnectedScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      // To avoid screen overflow when using keyboard
       resizeToAvoidBottomInset: false,
-      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff1e90ff),
       body: Center(
         child: Column(
           mainAxisAlignment:MainAxisAlignment.end,
           children:[
+            // Status Bar
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
+              margin:  EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30),
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -526,7 +546,6 @@ class ConnectedScreen extends StatelessWidget {
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
                     child: const Icon(
                       Icons.check_circle,
                       size: 50,
@@ -562,12 +581,10 @@ class ConnectedScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             Container(
               width:ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(100),
               color: Colors.white,
-              //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -586,12 +603,12 @@ class ConnectedScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
+                    width:ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
                     child: IconButton(
                       icon: const Icon(
                           Icons.arrow_forward_outlined,
@@ -610,7 +627,11 @@ class ConnectedScreen extends StatelessWidget {
             MergeSemantics(
               child: Column(children: [
                 Container(
-                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
+                  margin: EdgeInsets.fromLTRB(
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(0),
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(85)),
                   width: double.infinity,
                   height: ScreenUtil().setHeight(350),
                   child: IconButton(
@@ -619,7 +640,6 @@ class ConnectedScreen extends StatelessWidget {
                         size:350,
                         color: Colors.white,
                         semanticLabel: 'Please Hold To Record Your Question'),
-                    // Within the `FirstScreen` widget
                     onPressed: () {
                       // Need to change to the real function
                       // Navigate to the second screen using a named route.
@@ -630,9 +650,14 @@ class ConnectedScreen extends StatelessWidget {
                 Semantics(
                   excludeSemantics: true,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    padding: EdgeInsets.fromLTRB(
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(10),
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(40)),
                     child: Text('Hold To Record', textAlign: TextAlign.center,
-                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                        style: TextStyle(color:Colors.white,
+                            fontSize:ScreenUtil().setSp(32))),
                   ),
                 )
               ],),
@@ -674,13 +699,14 @@ class ListeningScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      // To avoid screen overflow when using keyboard
       resizeToAvoidBottomInset: false,
-      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xffb61316),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            // Status Bar
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
@@ -761,12 +787,12 @@ class ListeningScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width: ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color: Color(0xff0b7ae6),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
+                    width: ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color: Color(0xff0b7ae6),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
                     child: IconButton(
                       icon: const Icon(
                           Icons.arrow_forward_outlined,
@@ -800,7 +826,6 @@ class ListeningScreen extends StatelessWidget {
                         color: Colors.white,
                         semanticLabel: 'Please Speak Your Question',
                       ),
-                      // Within the `FirstScreen` widget
                       onPressed: () {
                         // Need to change to the real function
                         // Navigate to the second screen using a named route.
@@ -864,17 +889,22 @@ class WorkingScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      //To avoid screen overflow when using keyboard
       resizeToAvoidBottomInset: false,
-      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff978d17),
       body: Center(
         child: Column(
           mainAxisAlignment:MainAxisAlignment.end,
           children:[
+            // Status Bar
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(30),ScreenUtil().setWidth(0),ScreenUtil().setHeight(30)),
+              margin:  EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30),
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(30)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -889,7 +919,6 @@ class WorkingScreen extends StatelessWidget {
                       color:Color(0xff0b7ae6),
                       borderRadius:BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
                     child: const Icon(
                       Icons.check_circle,
                       size: 50,
@@ -925,7 +954,6 @@ class WorkingScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             Container(
               width:ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(100),
@@ -948,12 +976,12 @@ class WorkingScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width:ScreenUtil().setWidth(90),
-                      height: ScreenUtil().setHeight(90),
-                      decoration: const BoxDecoration(
-                        color:Color(0xff0b7ae6),
-                        borderRadius:BorderRadius.all(Radius.circular(10.0)),
-                      ),
+                    width:ScreenUtil().setWidth(90),
+                    height: ScreenUtil().setHeight(90),
+                    decoration: const BoxDecoration(
+                      color:Color(0xff0b7ae6),
+                      borderRadius:BorderRadius.all(Radius.circular(10.0)),
+                    ),
                     child: IconButton(
                       icon: const Icon(
                           Icons.arrow_forward_outlined,
@@ -972,7 +1000,11 @@ class WorkingScreen extends StatelessWidget {
             MergeSemantics(
               child: Column(children: [
                 Container(
-                  margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(85)),
+                  margin: EdgeInsets.fromLTRB(
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(0),
+                      ScreenUtil().setWidth(10),
+                      ScreenUtil().setHeight(85)),
                   width: double.infinity,
                   height: ScreenUtil().setHeight(350),
                   child: IconButton(
@@ -981,7 +1013,6 @@ class WorkingScreen extends StatelessWidget {
                       size:350,
                       color: Colors.white,
                       semanticLabel: 'Getting Response',),
-                    // Within the `FirstScreen` widget
                     onPressed: () {
                       // Need to change to the real function
                       // Navigate to the second screen using a named route.
@@ -993,9 +1024,14 @@ class WorkingScreen extends StatelessWidget {
                 Semantics(
                   excludeSemantics: true,
                   child:Padding(
-                    padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(40)),
+                    padding: EdgeInsets.fromLTRB(
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(10),
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(40)),
                     child: Text('Getting Response', textAlign: TextAlign.center,
-                        style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(32))),
+                        style: TextStyle(color:Colors.white,
+                            fontSize:ScreenUtil().setSp(32))),
                   ),
                 )
               ],),

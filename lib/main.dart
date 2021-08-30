@@ -268,7 +268,7 @@ class BluetoothScreen extends StatelessWidget {
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
               ),
             child: IconButton(
-              icon:Icon(Icons.arrow_forward_outlined, color: Colors.white,semanticLabel: 'Question is Completed',),
+              icon:Icon(Icons.arrow_forward_outlined, color: Colors.white,semanticLabel: 'Send Question',),
             onPressed: null,
           )
           );
@@ -281,7 +281,7 @@ class BluetoothScreen extends StatelessWidget {
           borderRadius:BorderRadius.all(Radius.circular(10.0)),
         ),
         child: IconButton(
-          icon:const Icon(Icons.arrow_forward_outlined,color: Colors.white,semanticLabel: 'Question is Completed',),
+          icon:const Icon(Icons.arrow_forward_outlined,color: Colors.white,semanticLabel: 'Send Question',),
           onPressed: (){
             Provider.of<BluetoothBeaconState>(context, listen: false).updateInfo(textController.text);
           },
@@ -294,7 +294,6 @@ class BluetoothScreen extends StatelessWidget {
       return Container(
         width:ScreenUtil().setWidth(350),
         height: ScreenUtil().setHeight(60),
-        //child: const Text('Not Connected', style: TextStyle(color:Colors.white,fontSize:30.0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -360,10 +359,6 @@ class BluetoothScreen extends StatelessWidget {
               ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
           width: double.infinity,
           height: ScreenUtil().setHeight(350),
-          //decoration: const BoxDecoration(
-          //  color:Color(0xff0b7ae6),
-          //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-          //),
           child: Icon(
               Icons.mic,
               size: ScreenUtil().setHeight(350),
@@ -378,10 +373,6 @@ class BluetoothScreen extends StatelessWidget {
           ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
       width: double.infinity,
       height: ScreenUtil().setHeight(350),
-      //decoration: const BoxDecoration(
-      //  color:Color(0xff0b7ae6),
-      //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-      //),
       child: Icon(
           Icons.wifi_off,
           size: ScreenUtil().setHeight(350),
@@ -400,7 +391,6 @@ class BluetoothScreen extends StatelessWidget {
             color:_stateButtonColor(state),
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           ),
-          //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
           child: Icon(icon,size: 50, color: Colors.white,semanticLabel: description,),
         );
       }else{
@@ -411,7 +401,6 @@ class BluetoothScreen extends StatelessWidget {
             color:_stateButtonColor(state),
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           ),
-          //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
           child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,semanticLabel: description,),
         );
       }
@@ -423,7 +412,6 @@ class BluetoothScreen extends StatelessWidget {
         color:_stateButtonColor(state),
         borderRadius: const BorderRadius.all(Radius.circular(10.0)),
       ),
-      //child: Icon(Icons.cancel,size: 50, color: Colors.white,),
       child: Icon(icon,size: 50, color: Colors.white,semanticLabel: description,),
     );
   }
@@ -451,7 +439,7 @@ class BluetoothScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
-        resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: _backgroundColor(context),
       body: Center(
         child: Column(
@@ -474,8 +462,6 @@ class BluetoothScreen extends StatelessWidget {
                 ],
               ),
             ),
-            //const Text('Connected', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
-            //const Text('Searching For Bluetooth Beacon', style: TextStyle(color:Colors.white,fontSize:30.0),  textAlign: TextAlign.center),
             _buildTextField(context, Provider.of<NetworkState>(context).connected),
             _buildCenterIcon(context),
             // Add Margin to push word inwards
@@ -562,7 +548,6 @@ class PermissionScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
-      // To go from Hex to ARGB just add '0xff' in front of the hex colour value.
       backgroundColor: const Color(0xff494949),
       body: Center(
         child: Column(
@@ -613,12 +598,7 @@ class PermissionScreen extends StatelessWidget {
               margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
               width: double.infinity,
               height: ScreenUtil().setHeight(350),
-              //decoration: const BoxDecoration(
-              //  color:Color(0xff0b7ae6),
-              //  borderRadius:BorderRadius.all(Radius.circular(120.0)),
-              //),
               child: IconButton(
-                //icon: const Icon(Icons.priority_high_outlined,size:150,color: Colors.white,),
                 icon: const Icon(Icons.priority_high_outlined,size:350,color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
                 // Within the `FirstScreen` widget
                 onPressed: () {
