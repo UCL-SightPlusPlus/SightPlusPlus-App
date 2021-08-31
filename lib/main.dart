@@ -475,12 +475,16 @@ class BluetoothScreen extends StatelessWidget {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Image(
-                      image: const AssetImage("images/intel_logo.png"),
-                      height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
-                    ),
-                  ]
+                Semantics(
+                  excludeSemantics: true,
+                  child: Image(
+                    image: const AssetImage("images/intel_logo.png"),
+                    height: ScreenUtil().setHeight(50),
+                    width: ScreenUtil().setWidth(50),
+                    semanticLabel: 'Intel Logo',
+                  ),
+                ),
+              ]
               ),
             )
           ],
@@ -623,16 +627,17 @@ class PermissionScreen extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image(
-                      image: AssetImage("images/intel_logo.png"),
-                      height: ScreenUtil().setHeight(50),
-                      width: ScreenUtil().setWidth(50),semanticLabel: 'Intel Logo',
-                    ),
-                  ]
-              ),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Semantics(
+                  excludeSemantics: true,
+                  child: Image(
+                    image: AssetImage("images/intel_logo.png"),
+                    height: ScreenUtil().setHeight(50),
+                    width: ScreenUtil().setWidth(50),
+                    semanticLabel: 'Intel Logo',
+                  ),
+                ),
+              ]),
             )
           ],
         ),
