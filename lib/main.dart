@@ -463,13 +463,26 @@ class BluetoothScreen extends StatelessWidget {
               ),
             ),
             _buildTextField(context, Provider.of<NetworkState>(context).connected),
-            _buildCenterIcon(context),
-            // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: _buildBottomText(context)
+
+            MergeSemantics(
+              child: Column(
+                children: [
+                  _buildCenterIcon(context),
+                  // Add Margin to push word inwards
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            ScreenUtil().setWidth(10),
+                            ScreenUtil().setHeight(10),
+                            ScreenUtil().setWidth(10),
+                            ScreenUtil().setHeight(70)),
+                        child: _buildBottomText(context)),
+                  )
+                ],
+              ),
             ),
-            
+
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(
@@ -598,33 +611,68 @@ class PermissionScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(0), ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-              width: double.infinity,
-              height: ScreenUtil().setHeight(350),
-              child: IconButton(
-                icon: const Icon(Icons.priority_high_outlined,size:350,color: Colors.white,semanticLabel: 'Necessary Permissions is Not Given, Please Give Permissions'),
-                // Within the `FirstScreen` widget
-                onPressed: () {
-                  // Navigate to the second screen using a named route.
-                  Provider.of<PermissionState>(context, listen: false).checkPermissions().then((value) {
-                    if(!value){
-                      return;
-                    }
-                    Provider.of<NetworkState>(context, listen: false).initNetworkConnection(flutterLocalNotificationsPlugin);
-                    Provider.of<BluetoothBeaconState>(context, listen: false).initBeaconScanner();
-                    Provider.of<BluetoothBeaconState>(context, listen: false).initTextToSpeech(languageCode: languageCode!);
-                    Provider.of<SpeechToTextState>(context, listen: false).initiateSpeechToText();
-                  });
-                },
+
+            MergeSemantics(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.fromLTRB(
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(0),
+                        ScreenUtil().setWidth(10),
+                        ScreenUtil().setHeight(50)),
+                    width: double.infinity,
+                    height: ScreenUtil().setHeight(350),
+                    child: IconButton(
+                      icon: const Icon(Icons.priority_high_outlined,
+                          size: 350,
+                          color: Colors.white,
+                          semanticLabel:
+                              'Necessary Permissions is Not Given, Please Give Permissions'),
+                      // Within the `FirstScreen` widget
+                      onPressed: () {
+                        // Navigate to the second screen using a named route.
+                        Provider.of<PermissionState>(context, listen: false)
+                            .checkPermissions()
+                            .then((value) {
+                          if (!value) {
+                            return;
+                          }
+                          Provider.of<NetworkState>(context, listen: false)
+                              .initNetworkConnection(
+                                  flutterLocalNotificationsPlugin);
+                          Provider.of<BluetoothBeaconState>(context,
+                                  listen: false)
+                              .initBeaconScanner();
+                          Provider.of<BluetoothBeaconState>(context,
+                                  listen: false)
+                              .initTextToSpeech(languageCode: languageCode!);
+                          Provider.of<SpeechToTextState>(context, listen: false)
+                              .initiateSpeechToText();
+                        });
+                      },
+                    ),
+                  ),
+                  // Add Margin to push word inwards
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          ScreenUtil().setWidth(10),
+                          ScreenUtil().setHeight(10),
+                          ScreenUtil().setWidth(10),
+                          ScreenUtil().setHeight(70)),
+                      child: Text('Necessary Permissions Not Given',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: ScreenUtil().setSp(24))),
+                    ),
+                  ),
+                ],
               ),
             ),
-            // Add Margin to push word inwards
-            Padding(
-              padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), ScreenUtil().setHeight(10), ScreenUtil().setWidth(10), ScreenUtil().setHeight(70)),
-              child: Text('Necessary Permissions Not Given', textAlign: TextAlign.center,
-                  style: TextStyle(color:Colors.white,fontSize:ScreenUtil().setSp(24))),
-            ),
+            
             Padding(
               padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(0),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(10)),
               child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
