@@ -261,8 +261,8 @@ class BluetoothScreen extends StatelessWidget {
     if(Provider.of<BluetoothBeaconState>(context).isHandling || Provider.of<SpeechToTextState>(context).isListening || textController.text == ''){
       return
           Container(
-            width:ScreenUtil().setWidth(50),
-            height: ScreenUtil().setHeight(50),
+            width:ScreenUtil().setWidth(80),
+            height: ScreenUtil().setHeight(80),
               decoration: const BoxDecoration(
                 color:Colors.grey,
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -274,8 +274,8 @@ class BluetoothScreen extends StatelessWidget {
           );
     }
     return Container(
-        width:ScreenUtil().setWidth(50),
-        height: ScreenUtil().setHeight(50),
+        width:ScreenUtil().setWidth(80),
+        height: ScreenUtil().setHeight(80),
         decoration: const BoxDecoration(
           color:Colors.green,
           borderRadius:BorderRadius.all(Radius.circular(10.0)),
@@ -292,20 +292,21 @@ class BluetoothScreen extends StatelessWidget {
   Widget _buildTextField(BuildContext context, bool state){
     if(state){
       return Container(
-        width:ScreenUtil().setWidth(350),
-        height: ScreenUtil().setHeight(60),
+        width:ScreenUtil().setWidth(400),
+        height: ScreenUtil().setHeight(100),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-              width:ScreenUtil().setWidth(280),
-              height: ScreenUtil().setHeight(50),
+              width:ScreenUtil().setWidth(300),
+              height: ScreenUtil().setHeight(80),
               decoration: const BoxDecoration(
                 color:Colors.white,
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
               ),
               child: TextField(
                 enabled: _textFieldAble(context),
+                style: TextStyle(fontSize: 32.0),
                 controller: textController,
                 decoration: InputDecoration(
                     hintText: "Question Asked"
@@ -313,8 +314,8 @@ class BluetoothScreen extends StatelessWidget {
               ),
             ),
             Container(
-                width:ScreenUtil().setWidth(50),
-                height: ScreenUtil().setHeight(50),
+                width:ScreenUtil().setWidth(80),
+                height: ScreenUtil().setHeight(80),
                 child: _buildQuestionButton(context)
             ),
           ],
@@ -356,7 +357,7 @@ class BluetoothScreen extends StatelessWidget {
         child: Container(
           margin: EdgeInsets.fromLTRB(
               ScreenUtil().setWidth(10), ScreenUtil().setHeight(0),
-              ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
+              ScreenUtil().setWidth(10), ScreenUtil().setHeight(30)),
           width: double.infinity,
           height: ScreenUtil().setHeight(350),
           child: Icon(
@@ -370,9 +371,9 @@ class BluetoothScreen extends StatelessWidget {
     return Container(
       margin: EdgeInsets.fromLTRB(
           ScreenUtil().setWidth(10), ScreenUtil().setHeight(0),
-          ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
+          ScreenUtil().setWidth(10), ScreenUtil().setHeight(30)),
       width: double.infinity,
-      height: ScreenUtil().setHeight(350),
+      height: ScreenUtil().setHeight(390),
       child: Icon(
           Icons.wifi_off,
           size: ScreenUtil().setHeight(350),
@@ -495,7 +496,7 @@ class BluetoothScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(50)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
