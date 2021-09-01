@@ -381,7 +381,7 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStateIcon(IconData icon, bool state, String description){
+  Widget _buildStateIcon(IconData icon, bool state){
     if(icon == Icons.bluetooth){
       if(state){
         return Container(
@@ -391,7 +391,7 @@ class BluetoothScreen extends StatelessWidget {
             color:_stateButtonColor(state),
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           ),
-          child: Icon(icon,size: 50, color: Colors.white,semanticLabel: description,),
+          child: Icon(icon,size: 50, color: Colors.white,semanticLabel: "Bluetooth Beacon is connected",),
         );
       }else{
         return Container(
@@ -401,7 +401,54 @@ class BluetoothScreen extends StatelessWidget {
             color:_stateButtonColor(state),
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           ),
-          child: Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,semanticLabel: description,),
+          child: const Icon(Icons.bluetooth_disabled,size: 50, color: Colors.white,semanticLabel: "Bluetooth Beacon is not connected",),
+        );
+      }
+    }
+    if(icon == Icons.wifi){
+      if(state){
+        return Container(
+          width:ScreenUtil().setWidth(100),
+          height: ScreenUtil().setHeight(100),
+          decoration: BoxDecoration(
+            color:_stateButtonColor(state),
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: Icon(icon,size: 50, color: Colors.white, semanticLabel: "Server is connected",),
+        );
+      }else{
+        return Container(
+          width:ScreenUtil().setWidth(100),
+          height: ScreenUtil().setHeight(100),
+          decoration: BoxDecoration(
+            color:_stateButtonColor(state),
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: Icon(icon,size: 50, color: Colors.white, semanticLabel: "Server is not connected",),
+        );
+      }
+    }
+
+    if(icon == Icons.wifi){
+      if(state){
+        return Container(
+          width:ScreenUtil().setWidth(100),
+          height: ScreenUtil().setHeight(100),
+          decoration: BoxDecoration(
+            color:_stateButtonColor(state),
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: Icon(icon,size: 50, color: Colors.white, semanticLabel: "Server is connected",),
+        );
+      }else{
+        return Container(
+          width:ScreenUtil().setWidth(100),
+          height: ScreenUtil().setHeight(100),
+          decoration: BoxDecoration(
+            color:_stateButtonColor(state),
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: Icon(icon,size: 50, color: Colors.white, semanticLabel: "Server is not connected",),
         );
       }
     }
@@ -412,7 +459,7 @@ class BluetoothScreen extends StatelessWidget {
         color:_stateButtonColor(state),
         borderRadius: const BorderRadius.all(Radius.circular(10.0)),
       ),
-      child: Icon(icon,size: 50, color: Colors.white,semanticLabel: description,),
+      child: Icon(icon,size: 50, color: Colors.white, semanticLabel: "Permission is granted",),
     );
   }
 
@@ -456,9 +503,9 @@ class BluetoothScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildStateIcon(Icons.check_circle, Provider.of<PermissionState>(context).permissionGranted, 'Permission is Given'),
-                  _buildStateIcon(Icons.wifi, Provider.of<NetworkState>(context).connected, 'Server is Connected'),
-                  _buildStateIcon(Icons.bluetooth, Provider.of<BluetoothBeaconState>(context).closestBeacon != -1, 'Bluetooth Beacon is Not Connected'),
+                  _buildStateIcon(Icons.check_circle, Provider.of<PermissionState>(context).permissionGranted),
+                  _buildStateIcon(Icons.wifi, Provider.of<NetworkState>(context).connected),
+                  _buildStateIcon(Icons.bluetooth, Provider.of<BluetoothBeaconState>(context).closestBeacon != -1),
                 ],
               ),
             ),
@@ -573,7 +620,7 @@ class PermissionScreen extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(400),
               height: ScreenUtil().setHeight(120),
-              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(70)),
+              margin:  EdgeInsets.fromLTRB(ScreenUtil().setWidth(10),ScreenUtil().setHeight(0),ScreenUtil().setWidth(10),ScreenUtil().setHeight(130)),
               decoration: const BoxDecoration(
                 color:Color(0xff333333),
                 borderRadius:BorderRadius.all(Radius.circular(10.0)),
