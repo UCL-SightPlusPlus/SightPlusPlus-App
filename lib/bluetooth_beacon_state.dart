@@ -6,6 +6,8 @@ import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:sight_plus_plus/retry_interceptor.dart';
 import 'package:sight_plus_plus/text_to_speech_state.dart';
 import 'package:translator/translator.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 
 import 'network_server_state.dart';
 
@@ -147,8 +149,12 @@ class BluetoothBeaconState with ChangeNotifier{
   }
 
   void updateLocation(){
-      _dio.get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response){
+      _dio.get("http://${NetworkState.ip}:9999/notifications/$_closestBeacon?lastFloor=$_lastFloor").then((response) async {
         if(response.statusCode == 200){
+          FlutterBeep.beep();
+          if(await Vibrate.canVibrate){
+            Vibrate.vibrate();
+          }
           _lastFloor = response.data['floor'];
           autoMessage = response.data['sentence'];
           tts.start(autoMessage);
@@ -166,11 +172,15 @@ class BluetoothBeaconState with ChangeNotifier{
         var msg = {'question': data};
         return msg;
       }
-      ).then((msg){
+      ).then((msg) async{
         _dio.post("http://${NetworkState
             .ip}:9999/questions/$closestBeacon?lastFloor=$lastFloor", data: msg)
-            .then((response) {
+            .then((response) async {
           if (response.statusCode == 200) {
+            FlutterBeep.beep();
+            if(await Vibrate.canVibrate){
+              Vibrate.vibrate();
+            }
             tts.start(response.data['sentence']);
             userMessage = response.data['sentence'];
           } else {

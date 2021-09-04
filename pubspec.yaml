@@ -44,6 +44,8 @@ dependencies:
   flutter_screenutil: ^5.0.0+2
   mockito: ^5.0.15
   http_mock_adapter: ^0.3.2
+  flutter_vibrate: ^1.1.0
+  flutter_beep: ^1.0.0
 
   flutter_local_notifications: ^8.0.0
   rxdart: ^0.27.1
