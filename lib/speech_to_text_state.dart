@@ -16,14 +16,13 @@ class SpeechToTextState with ChangeNotifier{
   final SpeechToText speech = SpeechToText();
 
 
-  void initiateSpeechToText() async {
+  void initiateSpeechToText({String languageCode = 'en'}) async {
     var hasSpeech = await speech.initialize(
         onError: errorListener,
         onStatus: statusListener,
         debugLogging: true);
     if (hasSpeech) {
-      var systemLocale = await speech.systemLocale();
-      _currentLocaleId = systemLocale?.localeId ?? '';
+      _currentLocaleId = languageCode;
       notifyListeners();
     }
   }
@@ -34,8 +33,8 @@ class SpeechToTextState with ChangeNotifier{
     speech.isAvailable;
     speech.listen(
         onResult: resultListener,
-        listenFor: Duration(seconds: 30),
-        pauseFor: Duration(seconds: 5),
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 5),
         partialResults: false,
         localeId: _currentLocaleId,
         onSoundLevelChange: soundLevelListener,
@@ -55,6 +54,7 @@ class SpeechToTextState with ChangeNotifier{
     notifyListeners();
   }
 
+  //get the recognition result
   void resultListener(SpeechRecognitionResult result) {
     _transcription = result.recognizedWords;
     notifyListeners();

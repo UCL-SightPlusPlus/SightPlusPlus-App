@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 class PermissionState with ChangeNotifier{
   bool _permissionGranted = false;
 
+  //check and get the necessary permissions
   Future<bool> checkPermissions() async{
     Map<Permission, PermissionStatus> serviceStatus = await [Permission.microphone, Permission.bluetooth, Permission.locationAlways].request();
     if(serviceStatus[Permission.microphone] != PermissionStatus.granted || serviceStatus[Permission.locationAlways] != PermissionStatus.granted || serviceStatus[Permission.bluetooth] != PermissionStatus.granted){
