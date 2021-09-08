@@ -4,21 +4,16 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:sight_plus_plus/text_to_speech_state.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 class NetworkState with ChangeNotifier{
   bool connected = false;
   static String ip = "";
   final StreamController<bool> _connectionStreamController =
-      StreamController<bool>();
+      StreamController<bool>(); // a stream to get server connection state
   StreamSubscription? _connectionSub;
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  bool notificationTouched = false;
-
-  void setConnected(bool connection) {
-    connected = connection;
-  }
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;// the push notification plugin
+  bool notificationTouched = false;// the notification has been pressed or not
 
   void initNetworkConnection(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin){
     if(_connectionSub == null){
@@ -28,9 +23,9 @@ class NetworkState with ChangeNotifier{
     }
   }
 
+  //push notification
    _showNotification(String payload) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    // I don't think we need to word about the first argument here. That's for communicating with FCM.
     AndroidNotificationDetails(
         'finder_001', 'Sight++ Finder', 'Alerts you if a Sight++ location is found',
         importance: Importance.max,
@@ -41,8 +36,10 @@ class NetworkState with ChangeNotifier{
     flutterLocalNotificationsPlugin.show(
         0, 'Location Found', 'Open To Connect', platformChannelSpecifics
         ,payload: payload);
+
+    //if the notification is not pressed in 20 seconds, send a false message to the stream
+    //which means the connection failed
     Future.delayed(const Duration(milliseconds: 20000), () async{
-      String? ssid = await WiFiForIoTPlugin.getSSID();
       if(!notificationTouched){
         _connectionStreamController.add(false);
       }
@@ -56,15 +53,18 @@ class NetworkState with ChangeNotifier{
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  //start handling the messages in the stream
   StreamSubscription startStream() {
     return _connectionStreamController.stream.listen((event) async {
       print('Receive new result');
       if (!event) {
+        //if not connected to the server, reset the IP to empty
         ip = '';
         print('Connection failed. Scan again');
       } else {
         print('Connected');
       }
+      //check the connectivity every 3 seconds
       Future.delayed(Duration(milliseconds: 3000), (){
         getConnection();
       });
@@ -75,18 +75,23 @@ class NetworkState with ChangeNotifier{
     _connectionSub!.cancel();
   }
 
+  //check the connectivity
   void getConnection() async {
     this.connected = false;
     bool connected = await WiFiForIoTPlugin.isConnected();
     if (connected) {
+      //if connected to the WiFi
       String? ssid = await WiFiForIoTPlugin.getSSID();
       if (ssid != null && ssid.contains("Sight++")) {
+        //if the SSID contains "Sight++"
         if(ip != ''){
+          //if the IP is not empty(connected to the server)
           this.connected = true;
           notifyListeners();
           _connectionStreamController.add(true);
           return;
         }else{
+          //if the server is not connected, get the IP
           _getIP();
           notifyListeners();
           _connectionStreamController.add(false);
@@ -95,9 +100,11 @@ class NetworkState with ChangeNotifier{
       }
     }
     notifyListeners();
+    //if not connected to the WiFi, scanning the WiFi and connect
     getSSID();
   }
 
+  //connect to the WiFi after the notification is pressed
   void connectToWifi(String ssid) async{
     try{
       notificationTouched = true;
@@ -113,6 +120,7 @@ class NetworkState with ChangeNotifier{
 
   }
 
+  //scan the WiFi and get the list of SSID
   void getSSID() async {
     try {
       notificationTouched = false;
@@ -121,6 +129,7 @@ class NetworkState with ChangeNotifier{
         if(network.ssid.toString().contains("Sight++")){
           print('found');
           _cancelAllNotifications();
+          //push a notification to let the user connect to the Sight++ WiFi
           _showNotification(network.ssid.toString());
           return;
         }

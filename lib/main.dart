@@ -126,6 +126,7 @@ void main() async {
           Locale('zh', ''),
           Locale('fr', ''),
           Locale('jp', ''),
+          Locale('el', '')
         ],
         routes: {
           '/': (context) {
@@ -170,7 +171,7 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
       Provider.of<BluetoothBeaconState>(context, listen: false)
           .initTextToSpeech(languageCode: languageCode!);
       Provider.of<SpeechToTextState>(context, listen: false)
-          .initiateSpeechToText();
+          .initiateSpeechToText(languageCode : languageCode!);
     });
   }
 
