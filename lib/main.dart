@@ -220,15 +220,192 @@ class SightPlusPlusAppState extends State<SightPlusPlusApp> {
     if (!Provider.of<PermissionState>(context).permissionGranted) {
       return const PermissionScreen();
     }
-    return BluetoothScreen();
+    return StatesScreen();
   }
 }
 
-class BluetoothScreen extends StatelessWidget {
-  TextEditingController textController = TextEditingController();
+// Controls the 'permissions' screen.
+class PermissionScreen extends StatelessWidget {
+  const PermissionScreen({Key? key}) : super(key: key);
 
-  BluetoothScreen({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    // Sets screen size, and makes sure it scales across devices.
+    ScreenUtil.init(
+        BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height,
+            maxWidth: MediaQuery.of(context).size.width),
+        designSize: const Size(412, 869),
+        //Sets screen orientation to portrait only.
+        orientation: Orientation.portrait);
+    return Scaffold(
+      backgroundColor: const Color(0xff494949),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            // Container for the status bar at the top of the screen.
+            Container(
+              // Defines icon container.
+              width: ScreenUtil().setWidth(400),
+              height: ScreenUtil().setHeight(120),
+              margin: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(130)),
+              decoration: const BoxDecoration(
+                color: Color(0xff333333),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Permissions Icon Container
+                  Container(
+                    width: ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
+                    decoration: const BoxDecoration(
+                      color: Color(0xffff1e39),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(
+                      Icons.cancel,
+                      size: ScreenUtil().setHeight(50),
+                      color: Colors.white,
+                      // Semantic label needed for screen reader.
+                      semanticLabel: 'Permission is Not Given',
+                    ),
+                  ),
+                  // Server Connection Icon Container.
+                  Container(
+                    width: ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
+                    decoration: const BoxDecoration(
+                      color: Color(0xffff1e39),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(
+                      Icons.wifi_off,
+                      size: ScreenUtil().setHeight(50),
+                      color: Colors.white,
+                      semanticLabel: 'Server is Not Connected',
+                    ),
+                  ),
+                  // Bluetooth Beacon Icon Container.
+                  Container(
+                    width: ScreenUtil().setWidth(100),
+                    height: ScreenUtil().setHeight(100),
+                    decoration: const BoxDecoration(
+                      color: Color(0xffff1e39),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: Icon(
+                      Icons.bluetooth_disabled,
+                      size: ScreenUtil().setHeight(50),
+                      color: Colors.white,
+                      semanticLabel: 'Bluetooth Beacon is Not Connected',
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
+            // Container for the center section of the screen.
+            // It uses MergeSemantics to make it only one entity for
+            // the screen reader.
+            MergeSemantics(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), 0,
+                        ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
+                    width: double.infinity,
+                    height: ScreenUtil().setHeight(350),
+                    child: IconButton(
+                      icon: Icon(Icons.priority_high_outlined,
+                          size: ScreenUtil().setHeight(350),
+                          color: Colors.white,
+                          semanticLabel:
+                              'Necessary Permissions is Not Given, Please Give Permissions'),
+                      onPressed: () {
+                        // Navigate to the second screen using a named route.
+                        Provider.of<PermissionState>(context, listen: false)
+                            .checkPermissions()
+                            .then((value) {
+                          if (!value) {
+                            return;
+                          }
+                          Provider.of<NetworkState>(context, listen: false)
+                              .initNetworkConnection(
+                                  flutterLocalNotificationsPlugin);
+                          Provider.of<BluetoothBeaconState>(context,
+                                  listen: false)
+                              .initBeaconScanner();
+                          Provider.of<BluetoothBeaconState>(context,
+                                  listen: false)
+                              .initTextToSpeech(languageCode: languageCode!);
+                          Provider.of<SpeechToTextState>(context, listen: false)
+                              .initiateSpeechToText();
+                        });
+                      },
+                    ),
+                  ),
+                  // Container for the text under the center icon.
+                  Semantics(
+                      // Excluded from being read by the screen reader.
+                      excludeSemantics: true,
+                      child: Container(
+                          height: ScreenUtil().setHeight(100),
+                          margin: EdgeInsets.fromLTRB(
+                              ScreenUtil().setWidth(10),
+                              0,
+                              ScreenUtil().setWidth(10),
+                              ScreenUtil().setHeight(10)),
+                          child: Text('Necessary Permissions Not Given',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: ScreenUtil().setSp(32))))),
+                ],
+              ),
+            ),
+
+            // Places where the Intel icon is.
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                  ScreenUtil().setWidth(0),
+                  ScreenUtil().setHeight(0),
+                  ScreenUtil().setWidth(10),
+                  ScreenUtil().setHeight(10)),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Semantics(
+                  // Makes the semantic section (including the logo)
+                  // unreadable by the screen reader.
+                  excludeSemantics: true,
+                  child: Image(
+                    image: const AssetImage("images/intel_logo.png"),
+                    height: ScreenUtil().setHeight(50),
+                    width: ScreenUtil().setWidth(50),
+                    semanticLabel: 'Intel Logo',
+                  ),
+                ),
+              ]),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Controls all other screens and states for app.
+class StatesScreen extends StatelessWidget {
+  final TextEditingController textController = TextEditingController();
+
+  StatesScreen({Key? key}) : super(key: key);
+
+  // Sets the status bar icon container colour.
   Color _stateButtonColor(bool state) {
     if (state) {
       return const Color(0xff0b7ae6);
@@ -236,6 +413,7 @@ class BluetoothScreen extends StatelessWidget {
     return const Color(0xffff1e39);
   }
 
+  // Sets the background colour for the app.
   Color _backgroundColor(BuildContext context) {
     if (!Provider.of<NetworkState>(context).connected) {
       return const Color(0xff494949);
@@ -250,11 +428,13 @@ class BluetoothScreen extends StatelessWidget {
     return const Color(0xff0b7ae6);
   }
 
+  //FILL IN
   bool _textFieldAble(BuildContext context) {
     return !Provider.of<SpeechToTextState>(context).isListening &&
         !Provider.of<BluetoothBeaconState>(context).isHandling;
   }
 
+  // Creates button for text field on screen.
   Widget _buildQuestionButton(BuildContext context) {
     if (Provider.of<BluetoothBeaconState>(context).isHandling ||
         Provider.of<SpeechToTextState>(context).isListening ||
@@ -266,7 +446,7 @@ class BluetoothScreen extends StatelessWidget {
             color: Colors.grey,
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
-          child: IconButton(
+          child: const IconButton(
             icon: Icon(
               Icons.arrow_forward_outlined,
               color: Colors.white,
@@ -295,6 +475,7 @@ class BluetoothScreen extends StatelessWidget {
         ));
   }
 
+  // Creates text field with button.
   Widget _buildTextField(BuildContext context, bool state) {
     if (state) {
       return Container(
@@ -313,9 +494,9 @@ class BluetoothScreen extends StatelessWidget {
               ),
               child: TextField(
                 enabled: _textFieldAble(context),
-                style: TextStyle(fontSize: 32.0),
+                style: const TextStyle(fontSize: 32.0),
                 controller: textController,
-                decoration: InputDecoration(hintText: "Question Asked"),
+                decoration: const InputDecoration(hintText: "Question Asked"),
               ),
             ),
             Container(
@@ -331,6 +512,7 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
+  // Creates center button.
   Widget _buildCenterIcon(BuildContext context) {
     if (Provider.of<NetworkState>(context).connected) {
       return GestureDetector(
@@ -385,6 +567,8 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
+  // Creates the icon bar at the top of the screen
+  // and also sets the state those icons (working/not working)
   Widget _buildStateIcon(IconData icon, bool state) {
     if (icon == Icons.bluetooth) {
       if (state) {
@@ -502,6 +686,7 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
+  // Sets the text below the center button according to the app state.
   Widget _buildBottomText(BuildContext context) {
     if (Provider.of<BluetoothBeaconState>(context).isHandling) {
       return Text('Getting Response',
@@ -533,6 +718,7 @@ class BluetoothScreen extends StatelessWidget {
         designSize: const Size(412, 869),
         orientation: Orientation.portrait);
     return Scaffold(
+      //Stops the screen from resizing when the keyboard comes us.
       resizeToAvoidBottomInset: false,
       backgroundColor: _backgroundColor(context),
       body: Center(
@@ -568,11 +754,11 @@ class BluetoothScreen extends StatelessWidget {
             ),
             _buildTextField(
                 context, Provider.of<NetworkState>(context).connected),
+            // Creates merged entity with center button and text below it.
             MergeSemantics(
               child: Column(
                 children: [
                   _buildCenterIcon(context),
-                  // Add Margin to push word inwards
                   Semantics(
                     excludeSemantics: true,
                     child: Container(
@@ -582,8 +768,7 @@ class BluetoothScreen extends StatelessWidget {
                             0,
                             ScreenUtil().setWidth(10),
                             ScreenUtil().setHeight(10)),
-                        child: _buildBottomText(context)
-                    ),
+                        child: _buildBottomText(context)),
                   )
                 ],
               ),
@@ -596,6 +781,7 @@ class BluetoothScreen extends StatelessWidget {
                   ScreenUtil().setHeight(10)),
               child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 Semantics(
+                  // Makes Intel icon appear invisible to screen reader.
                   excludeSemantics: true,
                   child: Image(
                     image: const AssetImage("images/intel_logo.png"),
@@ -663,164 +849,3 @@ class QuestionScreen extends StatelessWidget {
   }
 }
 
-class PermissionScreen extends StatelessWidget {
-  const PermissionScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(
-        BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height,
-            maxWidth: MediaQuery.of(context).size.width),
-        designSize: const Size(412, 869),
-        orientation: Orientation.portrait);
-    return Scaffold(
-      backgroundColor: const Color(0xff494949),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              width: ScreenUtil().setWidth(400),
-              height: ScreenUtil().setHeight(120),
-              margin: EdgeInsets.fromLTRB(
-                  ScreenUtil().setWidth(10),
-                  ScreenUtil().setHeight(0),
-                  ScreenUtil().setWidth(10),
-                  ScreenUtil().setHeight(130)),
-              decoration: const BoxDecoration(
-                color: Color(0xff333333),
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: ScreenUtil().setWidth(100),
-                    height: ScreenUtil().setHeight(100),
-                    decoration: const BoxDecoration(
-                      color: Color(0xffff1e39),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    child: Icon(
-                      Icons.cancel,
-                      size: ScreenUtil().setHeight(50),
-                      color: Colors.white,
-                      semanticLabel: 'Permission is Not Given',
-                    ),
-                  ),
-                  Container(
-                    width: ScreenUtil().setWidth(100),
-                    height: ScreenUtil().setHeight(100),
-                    decoration: const BoxDecoration(
-                      color: Color(0xffff1e39),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    child: Icon(
-                      Icons.wifi_off,
-                      size: ScreenUtil().setHeight(50),
-                      color: Colors.white,
-                      semanticLabel: 'Server is Not Connected',
-                    ),
-                  ),
-                  Container(
-                    width: ScreenUtil().setWidth(100),
-                    height: ScreenUtil().setHeight(100),
-                    decoration: const BoxDecoration(
-                      color: Color(0xffff1e39),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    child: Icon(
-                      Icons.bluetooth_disabled,
-                      size: ScreenUtil().setHeight(50),
-                      color: Colors.white,
-                      semanticLabel: 'Bluetooth Beacon is Not Connected',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            MergeSemantics(
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.fromLTRB(ScreenUtil().setWidth(10), 0,
-                        ScreenUtil().setWidth(10), ScreenUtil().setHeight(50)),
-                    width: double.infinity,
-                    height: ScreenUtil().setHeight(350),
-                    child: IconButton(
-                      icon: Icon(Icons.priority_high_outlined,
-                          size: ScreenUtil().setHeight(350),
-                          color: Colors.white,
-                          semanticLabel:
-                              'Necessary Permissions is Not Given, Please Give Permissions'),
-                      // Within the `FirstScreen` widget
-                      onPressed: () {
-                        // Navigate to the second screen using a named route.
-                        Provider.of<PermissionState>(context, listen: false)
-                            .checkPermissions()
-                            .then((value) {
-                          if (!value) {
-                            return;
-                          }
-                          Provider.of<NetworkState>(context, listen: false)
-                              .initNetworkConnection(
-                                  flutterLocalNotificationsPlugin);
-                          Provider.of<BluetoothBeaconState>(context,
-                                  listen: false)
-                              .initBeaconScanner();
-                          Provider.of<BluetoothBeaconState>(context,
-                                  listen: false)
-                              .initTextToSpeech(languageCode: languageCode!);
-                          Provider.of<SpeechToTextState>(context, listen: false)
-                              .initiateSpeechToText();
-                        });
-                      },
-                    ),
-                  ),
-                  // Add Margin to push word inwards
-                  Semantics(
-                      excludeSemantics: true,
-                      child: Container(
-                          height: ScreenUtil().setHeight(100),
-                          margin: EdgeInsets.fromLTRB(
-                              ScreenUtil().setWidth(10),
-                              0,
-                              ScreenUtil().setWidth(10),
-                              ScreenUtil().setHeight(10)),
-                          child: Text('Necessary Permissions Not Given',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: ScreenUtil().setSp(32)
-                              )
-                          )
-                      )
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                  ScreenUtil().setWidth(0),
-                  ScreenUtil().setHeight(0),
-                  ScreenUtil().setWidth(10),
-                  ScreenUtil().setHeight(10)),
-              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Semantics(
-                  excludeSemantics: true,
-                  child: Image(
-                    image: AssetImage("images/intel_logo.png"),
-                    height: ScreenUtil().setHeight(50),
-                    width: ScreenUtil().setWidth(50),
-                    semanticLabel: 'Intel Logo',
-                  ),
-                ),
-              ]),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
