@@ -26,3 +26,6 @@ Run the app on your phone.
 We recommand using beacons from 'jaalee' and using iBeacon mode. If you are not using 'jaalee' beacons, please make sure the beacons support iBeacon protocol and go to 'bluetooth_beacon_state.dart' then change the identifier in the 'initBeaconScanner' function to your identifier(s).
 
 When configuring the Bluetooth beacons, set the Major field as floor id and Minor field as room id.
+
+## How to Get APK
+Build the project and there will be a apk file.
