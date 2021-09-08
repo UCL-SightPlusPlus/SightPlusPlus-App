@@ -1,6 +1,6 @@
 # AVINA Mobile App
 
-This is the App of AVINA system.
+This is the App of AVINA system. The app only works on Android for now. We recommend using it on devices with Android version under 11.0 for the best user experience. On Android 11.0 the user has to grant 'always' level permission for 'access location' in the setting page.
 
 ## Getting Started
 The full instructions can be found at:
