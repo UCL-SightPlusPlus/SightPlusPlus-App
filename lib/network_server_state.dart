@@ -108,7 +108,10 @@ class NetworkState with ChangeNotifier{
   void connectToWifi(String ssid) async{
     try{
       notificationTouched = true;
-      bool networkFound = await WiFiForIoTPlugin.connect(ssid, password: 'liuzhaoxi', security: NetworkSecurity.WPA);
+      //change the password and security type if you have one
+      bool networkFound = await WiFiForIoTPlugin.connect(ssid, password: 'YOURPASSWORD', security: NetworkSecurity.WPA);
+      //if you are using an open WiFi, use the following code
+      //bool networkFound = await WiFiForIoTPlugin.connect(ssid);
       if (!networkFound) {
         connected = false;
       }

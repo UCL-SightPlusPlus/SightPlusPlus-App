@@ -429,7 +429,7 @@ class StatesScreen extends StatelessWidget {
     return const Color(0xff0b7ae6);
   }
 
-  //FILL IN
+  //checks the text field is editable or not
   bool _textFieldAble(BuildContext context) {
     return !Provider.of<SpeechToTextState>(context).isListening &&
         !Provider.of<BluetoothBeaconState>(context).isHandling;
@@ -476,7 +476,7 @@ class StatesScreen extends StatelessWidget {
         ));
   }
 
-  // Creates text field with button.
+  // Creates text field.
   Widget _buildTextField(BuildContext context, bool state) {
     if (state) {
       return Container(
