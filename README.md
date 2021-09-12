@@ -2,6 +2,13 @@
 
 This is the App of AVINA system. The app only works on Android for now. We recommend using it on devices with Android version under 11.0 for the best user experience. On Android 11.0 the user has to grant 'always' level permission for 'access location' in the setting page.
 
+#Prerequisite
+Before using the app, please set up the location server first.
+The instructions can be found at:
+
+
+https://github.com/UCL-SightPlusPlus/SightPlusPlus-LocationServer
+
 ## Getting Started
 The full instructions can be found at:
 https://flutter.dev/docs/get-started/install
