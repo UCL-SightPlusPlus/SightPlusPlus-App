@@ -3,6 +3,8 @@ import 'package:sight_plus_plus/bluetooth_beacon_state.dart';
 import 'package:sight_plus_plus/network_server_state.dart';
 
 class RetryOnError extends Interceptor{
+  //this class is used for the situation that the server is timeout
+  //the dio will resend the request to the server
 
   RetryOnError(this.beaconState);
   BluetoothBeaconState beaconState;
